@@ -181,7 +181,8 @@ public class Item
     public static Item recordWard = (new ItemRecord(2009, "ward")).setIconCoord(9, 15).setItemName("record");
     public static Item record11 = (new ItemRecord(2010, "11")).setIconCoord(10, 15).setItemName("record");
     public static Item recordWait = (new ItemRecord(2011, "wait")).setIconCoord(11, 15).setItemName("record");
-    
+
+    // battlecraft
     public static Item sandbag = (new SandbagItem());
 
     /** Item index + 256 */

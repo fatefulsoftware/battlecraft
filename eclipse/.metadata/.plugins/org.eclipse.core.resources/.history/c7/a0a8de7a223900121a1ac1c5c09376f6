@@ -1,9 +1,0 @@
-package net.minecraft.src;
-
-import java.util.Random;
-
-public class SandbagItemBlock extends ItemBlock {
-    public SandbagItemBlock(int par1) {
-		super(par1);
-	}
-}

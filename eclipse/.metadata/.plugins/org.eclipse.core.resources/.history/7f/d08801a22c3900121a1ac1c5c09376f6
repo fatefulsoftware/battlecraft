@@ -1,7 +1,0 @@
-package net.minecraft.src;
-
-public class SandbagItem extends ItemBlock {
-	public SandbagItem(int par1) {
-		super(par1);
-	}
-}

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename compilation unit &apos;net.minecraft.src.SandbagItemBlock.java&apos; to &apos;SandbagItem.java&apos;&#x0A;- Original project: &apos;Client&apos;&#x0A;- Original element: &apos;net.minecraft.src.SandbagItemBlock.java&apos;&#x0A;- Renamed element: &apos;net.minecraft.src.SandbagItem.java&apos;" description="Rename compilation unit &apos;SandbagItemBlock.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;net.minecraft.src{SandbagItemBlock.java" name="SandbagItem.java" references="false" stamp="1354087463441" version="1.0"/>
-</session>

@@ -201,7 +201,8 @@ public class Block
     public static final Block woodenButton = (new BlockButton(143, planks.blockIndexInTexture, true)).setHardness(0.5F).setStepSound(soundWoodFootstep).setBlockName("button").setRequiresSelfNotify();
     public static final Block skull = (new BlockSkull(144)).setHardness(1.0F).setStepSound(soundStoneFootstep).setBlockName("skull").setRequiresSelfNotify();
     public static final Block anvil = (new BlockAnvil(145)).setHardness(5.0F).setStepSound(soundAnvilFootstep).setResistance(2000.0F).setBlockName("anvil").setRequiresSelfNotify();
-    
+
+    // battlecraft
     public static final Block sandbag = (new SandbagBlock(146));
 
     /**
