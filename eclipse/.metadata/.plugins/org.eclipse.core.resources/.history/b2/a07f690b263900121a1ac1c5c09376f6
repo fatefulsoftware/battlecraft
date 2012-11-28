@@ -1,0 +1,17 @@
+package net.minecraft.src;
+
+public class SandbagBlock extends Block {
+	protected static final Material material = Material.clay;
+	
+	protected SandbagBloc (int par1, int par2, Material par3Material) {
+		super(par1, par2, material);
+	}
+	
+    protected SandbagBlock (int par1, Material par2Material) {
+    	super(par1, material);
+    }
+	
+    protected SandbagBlock (int par1) {
+    	super(par1, material);
+    }
+}

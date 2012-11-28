@@ -1,0 +1,12 @@
+package net.minecraft.src;
+
+import java.util.Random;
+
+public class SandbagBlock extends ItemBlock {
+
+    public int idDropped (int i, Random random) {
+    	return Item.sandbag.shiftedIndex - 256;
+    }
+    
+    
+}

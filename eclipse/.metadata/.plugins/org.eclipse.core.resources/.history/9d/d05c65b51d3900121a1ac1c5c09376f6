@@ -1,0 +1,11 @@
+package net.minecraft.src;
+
+public class SandbagItem extends Item {
+    public ItemFood (int i) {
+            super(i);
+            maxStackSize = 64;
+    }
+
+    public ItemStack onItemRightClick (ItemStack itemstack, World world, EntityPlayer entityplayer) {
+    }
+}
