@@ -401,11 +401,11 @@ public class EntityTrackerEntry
 
         if (this.myEntity instanceof EntityItem)
         {
-            EntityItem var9 = (EntityItem)this.myEntity;
-            Packet21PickupSpawn var10 = new Packet21PickupSpawn(var9);
-            var9.posX = (double)var10.xPosition / 32.0D;
-            var9.posY = (double)var10.yPosition / 32.0D;
-            var9.posZ = (double)var10.zPosition / 32.0D;
+            EntityItem var12 = (EntityItem)this.myEntity;
+            Packet21PickupSpawn var10 = new Packet21PickupSpawn(var12);
+            var12.posX = (double)var10.xPosition / 32.0D;
+            var12.posY = (double)var10.yPosition / 32.0D;
+            var12.posZ = (double)var10.zPosition / 32.0D;
             return var10;
         }
         else if (this.myEntity instanceof EntityPlayerMP)
@@ -414,9 +414,11 @@ public class EntityTrackerEntry
         }
         else
         {
+            EntityMinecart var1;
+
             if (this.myEntity instanceof EntityMinecart)
             {
-                EntityMinecart var1 = (EntityMinecart)this.myEntity;
+                var1 = (EntityMinecart)this.myEntity;
 
                 if (var1.minecartType == 0)
                 {
@@ -442,13 +444,13 @@ public class EntityTrackerEntry
             {
                 if (this.myEntity instanceof EntityFishHook)
                 {
-                    EntityPlayer var8 = ((EntityFishHook)this.myEntity).angler;
-                    return new Packet23VehicleSpawn(this.myEntity, 90, var8 != null ? var8.entityId : this.myEntity.entityId);
+                    EntityPlayer var11 = ((EntityFishHook)this.myEntity).angler;
+                    return new Packet23VehicleSpawn(this.myEntity, 90, var11 != null ? var11.entityId : this.myEntity.entityId);
                 }
                 else if (this.myEntity instanceof EntityArrow)
                 {
-                    Entity var7 = ((EntityArrow)this.myEntity).shootingEntity;
-                    return new Packet23VehicleSpawn(this.myEntity, 60, var7 != null ? var7.entityId : this.myEntity.entityId);
+                    Entity var8 = ((EntityArrow)this.myEntity).shootingEntity;
+                    return new Packet23VehicleSpawn(this.myEntity, 60, var8 != null ? var8.entityId : this.myEntity.entityId);
                 }
                 else if (this.myEntity instanceof EntitySnowball)
                 {
@@ -472,36 +474,36 @@ public class EntityTrackerEntry
                 }
                 else
                 {
-                    Packet23VehicleSpawn var2;
+                    Packet23VehicleSpawn var4;
 
                     if (this.myEntity instanceof EntityFireball)
                     {
-                        EntityFireball var6 = (EntityFireball)this.myEntity;
-                        var2 = null;
-                        byte var3 = 63;
+                        EntityFireball var7 = (EntityFireball)this.myEntity;
+                        var1 = null;
+                        byte var9 = 63;
 
                         if (this.myEntity instanceof EntitySmallFireball)
                         {
-                            var3 = 64;
+                            var9 = 64;
                         }
                         else if (this.myEntity instanceof EntityWitherSkull)
                         {
-                            var3 = 66;
+                            var9 = 66;
                         }
 
-                        if (var6.shootingEntity != null)
+                        if (var7.shootingEntity != null)
                         {
-                            var2 = new Packet23VehicleSpawn(this.myEntity, var3, ((EntityFireball)this.myEntity).shootingEntity.entityId);
+                            var4 = new Packet23VehicleSpawn(this.myEntity, var9, ((EntityFireball)this.myEntity).shootingEntity.entityId);
                         }
                         else
                         {
-                            var2 = new Packet23VehicleSpawn(this.myEntity, var3, 0);
+                            var4 = new Packet23VehicleSpawn(this.myEntity, var9, 0);
                         }
 
-                        var2.speedX = (int)(var6.accelerationX * 8000.0D);
-                        var2.speedY = (int)(var6.accelerationY * 8000.0D);
-                        var2.speedZ = (int)(var6.accelerationZ * 8000.0D);
-                        return var2;
+                        var4.speedX = (int)(var7.accelerationX * 8000.0D);
+                        var4.speedY = (int)(var7.accelerationY * 8000.0D);
+                        var4.speedZ = (int)(var7.accelerationZ * 8000.0D);
+                        return var4;
                     }
                     else if (this.myEntity instanceof EntityEgg)
                     {
@@ -517,8 +519,8 @@ public class EntityTrackerEntry
                     }
                     else if (this.myEntity instanceof EntityFallingSand)
                     {
-                        EntityFallingSand var5 = (EntityFallingSand)this.myEntity;
-                        return new Packet23VehicleSpawn(this.myEntity, 70, var5.blockID | var5.metadata << 16);
+                        EntityFallingSand var6 = (EntityFallingSand)this.myEntity;
+                        return new Packet23VehicleSpawn(this.myEntity, 70, var6.blockID | var6.metadata << 16);
                     }
                     else if (this.myEntity instanceof EntityPainting)
                     {
@@ -526,12 +528,12 @@ public class EntityTrackerEntry
                     }
                     else if (this.myEntity instanceof EntityItemFrame)
                     {
-                        EntityItemFrame var4 = (EntityItemFrame)this.myEntity;
-                        var2 = new Packet23VehicleSpawn(this.myEntity, 71, var4.hangingDirection);
-                        var2.xPosition = MathHelper.floor_float((float)(var4.xPosition * 32));
-                        var2.yPosition = MathHelper.floor_float((float)(var4.yPosition * 32));
-                        var2.zPosition = MathHelper.floor_float((float)(var4.zPosition * 32));
-                        return var2;
+                        EntityItemFrame var5 = (EntityItemFrame)this.myEntity;
+                        var4 = new Packet23VehicleSpawn(this.myEntity, 71, var5.hangingDirection);
+                        var4.xPosition = MathHelper.floor_float((float)(var5.xPosition * 32));
+                        var4.yPosition = MathHelper.floor_float((float)(var5.yPosition * 32));
+                        var4.zPosition = MathHelper.floor_float((float)(var5.zPosition * 32));
+                        return var4;
                     }
                     else if (this.myEntity instanceof EntityXPOrb)
                     {
@@ -539,7 +541,21 @@ public class EntityTrackerEntry
                     }
                     else
                     {
-                        throw new IllegalArgumentException("Don\'t know how to add " + this.myEntity.getClass() + "!");
+                        Iterator var2 = ModLoader.getTrackers().values().iterator();
+                        EntityTrackerNonliving var3;
+
+                        do
+                        {
+                            if (!var2.hasNext())
+                            {
+                                throw new IllegalArgumentException("Don\'t know how to add " + this.myEntity.getClass() + "!");
+                            }
+
+                            var3 = (EntityTrackerNonliving)var2.next();
+                        }
+                        while (!var3.entityClass.isAssignableFrom(this.myEntity.getClass()));
+
+                        return var3.mod.getSpawnPacket(this.myEntity, var3.id);
                     }
                 }
             }

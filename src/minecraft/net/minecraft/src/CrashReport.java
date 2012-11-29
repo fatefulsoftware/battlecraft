@@ -48,6 +48,7 @@ public class CrashReport
         this.field_85061_c.addCrashSectionCallable("AABB Pool Size", new CallableCrashMemoryReport(this));
         this.field_85061_c.addCrashSectionCallable("Suspicious classes", new CallableSuspiciousClasses(this));
         this.field_85061_c.addCrashSectionCallable("IntCache", new CallableIntCache(this));
+        this.field_85061_c.addCrashSection("ModLoader", ModLoader.getCrashReport());
     }
 
     /**

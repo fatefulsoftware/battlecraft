@@ -105,6 +105,7 @@ public class SlotCrafting extends Slot
     public void onPickupFromSlot(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack)
     {
         this.onCrafting(par2ItemStack);
+        ModLoader.takenFromCrafting(this.thePlayer, par2ItemStack, this.craftMatrix);
 
         for (int var3 = 0; var3 < this.craftMatrix.getSizeInventory(); ++var3)
         {

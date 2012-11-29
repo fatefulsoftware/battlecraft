@@ -133,23 +133,26 @@ public class NetServerHandler extends NetHandler
                 double var5;
                 double var7;
                 double var9;
-                double var13;
+                double var11;
+                float var13;
+                float var14;
+                double var15;
 
                 if (this.playerEntity.ridingEntity != null)
                 {
-                    float var34 = this.playerEntity.rotationYaw;
-                    float var4 = this.playerEntity.rotationPitch;
+                    var13 = this.playerEntity.rotationYaw;
+                    var14 = this.playerEntity.rotationPitch;
                     this.playerEntity.ridingEntity.updateRiderPosition();
                     var5 = this.playerEntity.posX;
                     var7 = this.playerEntity.posY;
                     var9 = this.playerEntity.posZ;
-                    double var35 = 0.0D;
-                    var13 = 0.0D;
+                    var15 = 0.0D;
+                    var11 = 0.0D;
 
                     if (par1Packet10Flying.rotating)
                     {
-                        var34 = par1Packet10Flying.yaw;
-                        var4 = par1Packet10Flying.pitch;
+                        var13 = par1Packet10Flying.yaw;
+                        var14 = par1Packet10Flying.pitch;
                     }
 
                     if (par1Packet10Flying.moving && par1Packet10Flying.yPosition == -999.0D && par1Packet10Flying.stance == -999.0D)
@@ -161,16 +164,16 @@ public class NetServerHandler extends NetHandler
                             return;
                         }
 
-                        var35 = par1Packet10Flying.xPosition;
-                        var13 = par1Packet10Flying.zPosition;
+                        var15 = par1Packet10Flying.xPosition;
+                        var11 = par1Packet10Flying.zPosition;
                     }
 
                     this.playerEntity.onGround = par1Packet10Flying.onGround;
                     this.playerEntity.onUpdateEntity();
-                    this.playerEntity.moveEntity(var35, 0.0D, var13);
-                    this.playerEntity.setPositionAndRotation(var5, var7, var9, var34, var4);
-                    this.playerEntity.motionX = var35;
-                    this.playerEntity.motionZ = var13;
+                    this.playerEntity.moveEntity(var15, 0.0D, var11);
+                    this.playerEntity.setPositionAndRotation(var5, var7, var9, var13, var14);
+                    this.playerEntity.motionX = var15;
+                    this.playerEntity.motionZ = var11;
 
                     if (this.playerEntity.ridingEntity != null)
                     {
@@ -205,8 +208,8 @@ public class NetServerHandler extends NetHandler
                 var5 = this.playerEntity.posX;
                 var7 = this.playerEntity.posY;
                 var9 = this.playerEntity.posZ;
-                float var11 = this.playerEntity.rotationYaw;
-                float var12 = this.playerEntity.rotationPitch;
+                var13 = this.playerEntity.rotationYaw;
+                var14 = this.playerEntity.rotationPitch;
 
                 if (par1Packet10Flying.moving && par1Packet10Flying.yPosition == -999.0D && par1Packet10Flying.stance == -999.0D)
                 {
@@ -218,12 +221,12 @@ public class NetServerHandler extends NetHandler
                     var5 = par1Packet10Flying.xPosition;
                     var7 = par1Packet10Flying.yPosition;
                     var9 = par1Packet10Flying.zPosition;
-                    var13 = par1Packet10Flying.stance - par1Packet10Flying.yPosition;
+                    var11 = par1Packet10Flying.stance - par1Packet10Flying.yPosition;
 
-                    if (!this.playerEntity.isPlayerSleeping() && (var13 > 1.65D || var13 < 0.1D))
+                    if (!this.playerEntity.isPlayerSleeping() && (var11 > 1.65D || var11 < 0.1D))
                     {
                         this.kickPlayerFromServer("Illegal stance");
-                        logger.warning(this.playerEntity.username + " had an illegal stance: " + var13);
+                        logger.warning(this.playerEntity.username + " had an illegal stance: " + var11);
                         return;
                     }
 
@@ -236,30 +239,30 @@ public class NetServerHandler extends NetHandler
 
                 if (par1Packet10Flying.rotating)
                 {
-                    var11 = par1Packet10Flying.yaw;
-                    var12 = par1Packet10Flying.pitch;
+                    var13 = par1Packet10Flying.yaw;
+                    var14 = par1Packet10Flying.pitch;
                 }
 
                 this.playerEntity.onUpdateEntity();
                 this.playerEntity.ySize = 0.0F;
-                this.playerEntity.setPositionAndRotation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
+                this.playerEntity.setPositionAndRotation(this.lastPosX, this.lastPosY, this.lastPosZ, var13, var14);
 
                 if (!this.hasMoved)
                 {
                     return;
                 }
 
-                var13 = var5 - this.playerEntity.posX;
-                double var15 = var7 - this.playerEntity.posY;
+                var11 = var5 - this.playerEntity.posX;
+                var15 = var7 - this.playerEntity.posY;
                 double var17 = var9 - this.playerEntity.posZ;
-                double var19 = Math.min(Math.abs(var13), Math.abs(this.playerEntity.motionX));
+                double var19 = Math.min(Math.abs(var11), Math.abs(this.playerEntity.motionX));
                 double var21 = Math.min(Math.abs(var15), Math.abs(this.playerEntity.motionY));
                 double var23 = Math.min(Math.abs(var17), Math.abs(this.playerEntity.motionZ));
                 double var25 = var19 * var19 + var21 * var21 + var23 * var23;
 
                 if (var25 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))
                 {
-                    logger.warning(this.playerEntity.username + " moved too quickly! " + var13 + "," + var15 + "," + var17 + " (" + var19 + ", " + var21 + ", " + var23 + ")");
+                    logger.warning(this.playerEntity.username + " moved too quickly! " + var11 + "," + var15 + "," + var17 + " (" + var19 + ", " + var21 + ", " + var23 + ")");
                     this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
                     return;
                 }
@@ -272,11 +275,11 @@ public class NetServerHandler extends NetHandler
                     this.playerEntity.addExhaustion(0.2F);
                 }
 
-                this.playerEntity.moveEntity(var13, var15, var17);
+                this.playerEntity.moveEntity(var11, var15, var17);
                 this.playerEntity.onGround = par1Packet10Flying.onGround;
-                this.playerEntity.addMovementStat(var13, var15, var17);
+                this.playerEntity.addMovementStat(var11, var15, var17);
                 double var29 = var15;
-                var13 = var5 - this.playerEntity.posX;
+                var11 = var5 - this.playerEntity.posX;
                 var15 = var7 - this.playerEntity.posY;
 
                 if (var15 > -0.5D || var15 < 0.5D)
@@ -285,7 +288,7 @@ public class NetServerHandler extends NetHandler
                 }
 
                 var17 = var9 - this.playerEntity.posZ;
-                var25 = var13 * var13 + var15 * var15 + var17 * var17;
+                var25 = var11 * var11 + var15 * var15 + var17 * var17;
                 boolean var31 = false;
 
                 if (var25 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative())
@@ -294,12 +297,12 @@ public class NetServerHandler extends NetHandler
                     logger.warning(this.playerEntity.username + " moved wrongly!");
                 }
 
-                this.playerEntity.setPositionAndRotation(var5, var7, var9, var11, var12);
+                this.playerEntity.setPositionAndRotation(var5, var7, var9, var13, var14);
                 boolean var32 = var2.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double)var27, (double)var27, (double)var27)).isEmpty();
 
                 if (var28 && (var31 || !var32) && !this.playerEntity.isPlayerSleeping())
                 {
-                    this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
+                    this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var13, var14);
                     return;
                 }
 
@@ -612,6 +615,8 @@ public class NetServerHandler extends NetHandler
 
     public void handleChat(Packet3Chat par1Packet3Chat)
     {
+        ModLoader.serverChat(this, par1Packet3Chat.message);
+
         if (this.playerEntity.getChatVisibility() == 2)
         {
             this.sendPacketToPlayer(new Packet3Chat("Cannot send chat message."));
@@ -914,43 +919,43 @@ public class NetServerHandler extends NetHandler
                 }
             }
 
-            int var6;
+            int var5;
             int var8;
 
-            for (var8 = 0; var8 < 4; ++var8)
+            for (var5 = 0; var5 < 4; ++var5)
             {
-                boolean var5 = true;
+                boolean var6 = true;
 
-                if (par1Packet130UpdateSign.signLines[var8].length() > 15)
+                if (par1Packet130UpdateSign.signLines[var5].length() > 15)
                 {
-                    var5 = false;
+                    var6 = false;
                 }
                 else
                 {
-                    for (var6 = 0; var6 < par1Packet130UpdateSign.signLines[var8].length(); ++var6)
+                    for (var8 = 0; var8 < par1Packet130UpdateSign.signLines[var5].length(); ++var8)
                     {
-                        if (ChatAllowedCharacters.allowedCharacters.indexOf(par1Packet130UpdateSign.signLines[var8].charAt(var6)) < 0)
+                        if (ChatAllowedCharacters.allowedCharacters.indexOf(par1Packet130UpdateSign.signLines[var5].charAt(var8)) < 0)
                         {
-                            var5 = false;
+                            var6 = false;
                         }
                     }
                 }
 
-                if (!var5)
+                if (!var6)
                 {
-                    par1Packet130UpdateSign.signLines[var8] = "!?";
+                    par1Packet130UpdateSign.signLines[var5] = "!?";
                 }
             }
 
             if (var3 instanceof TileEntitySign)
             {
-                var8 = par1Packet130UpdateSign.xPosition;
+                var5 = par1Packet130UpdateSign.xPosition;
                 int var9 = par1Packet130UpdateSign.yPosition;
-                var6 = par1Packet130UpdateSign.zPosition;
+                var8 = par1Packet130UpdateSign.zPosition;
                 TileEntitySign var7 = (TileEntitySign)var3;
                 System.arraycopy(par1Packet130UpdateSign.signLines, 0, var7.signText, 0, 4);
                 var7.onInventoryChanged();
-                var2.markBlockForUpdate(var8, var9, var6);
+                var2.markBlockForUpdate(var5, var9, var8);
             }
         }
     }
@@ -986,11 +991,11 @@ public class NetServerHandler extends NetHandler
     public void handleAutoComplete(Packet203AutoComplete par1Packet203AutoComplete)
     {
         StringBuilder var2 = new StringBuilder();
-        String var4;
+        String var3;
 
-        for (Iterator var3 = this.mcServer.getPossibleCompletions(this.playerEntity, par1Packet203AutoComplete.getText()).iterator(); var3.hasNext(); var2.append(var4))
+        for (Iterator var4 = this.mcServer.getPossibleCompletions(this.playerEntity, par1Packet203AutoComplete.getText()).iterator(); var4.hasNext(); var2.append(var3))
         {
-            var4 = (String)var3.next();
+            var3 = (String)var4.next();
 
             if (var2.length() > 0)
             {
@@ -1031,9 +1036,9 @@ public class NetServerHandler extends NetHandler
                     var4.setTagInfo("pages", var3.getTagCompound().getTagList("pages"));
                 }
             }
-            catch (Exception var12)
+            catch (Exception var14)
             {
-                var12.printStackTrace();
+                var14.printStackTrace();
             }
         }
         else if ("MC|BSign".equals(par1Packet250CustomPayload.channel))
@@ -1058,36 +1063,37 @@ public class NetServerHandler extends NetHandler
                     var4.itemID = Item.writtenBook.shiftedIndex;
                 }
             }
-            catch (Exception var11)
+            catch (Exception var13)
             {
-                var11.printStackTrace();
+                var13.printStackTrace();
             }
         }
         else
         {
-            int var14;
+            int var5;
 
             if ("MC|TrSel".equals(par1Packet250CustomPayload.channel))
             {
                 try
                 {
                     var2 = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
-                    var14 = var2.readInt();
-                    Container var16 = this.playerEntity.openContainer;
+                    var5 = var2.readInt();
+                    Container var6 = this.playerEntity.openContainer;
 
-                    if (var16 instanceof ContainerMerchant)
+                    if (var6 instanceof ContainerMerchant)
                     {
-                        ((ContainerMerchant)var16).setCurrentRecipeIndex(var14);
+                        ((ContainerMerchant)var6).setCurrentRecipeIndex(var5);
                     }
                 }
-                catch (Exception var10)
+                catch (Exception var12)
                 {
-                    var10.printStackTrace();
+                    var12.printStackTrace();
                 }
             }
             else
             {
-                int var18;
+                String var8;
+                int var15;
 
                 if ("MC|AdvCdm".equals(par1Packet250CustomPayload.channel))
                 {
@@ -1100,22 +1106,22 @@ public class NetServerHandler extends NetHandler
                         try
                         {
                             var2 = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
-                            var14 = var2.readInt();
-                            var18 = var2.readInt();
-                            int var5 = var2.readInt();
-                            String var6 = Packet.readString(var2, 256);
-                            TileEntity var7 = this.playerEntity.worldObj.getBlockTileEntity(var14, var18, var5);
+                            var5 = var2.readInt();
+                            var15 = var2.readInt();
+                            int var7 = var2.readInt();
+                            var8 = Packet.readString(var2, 256);
+                            TileEntity var9 = this.playerEntity.worldObj.getBlockTileEntity(var5, var15, var7);
 
-                            if (var7 != null && var7 instanceof TileEntityCommandBlock)
+                            if (var9 != null && var9 instanceof TileEntityCommandBlock)
                             {
-                                ((TileEntityCommandBlock)var7).setCommand(var6);
-                                this.playerEntity.worldObj.markBlockForUpdate(var14, var18, var5);
-                                this.playerEntity.sendChatToPlayer("Command set: " + var6);
+                                ((TileEntityCommandBlock)var9).setCommand(var8);
+                                this.playerEntity.worldObj.markBlockForUpdate(var5, var15, var7);
+                                this.playerEntity.sendChatToPlayer("Command set: " + var8);
                             }
                         }
-                        catch (Exception var9)
+                        catch (Exception var11)
                         {
-                            var9.printStackTrace();
+                            var11.printStackTrace();
                         }
                     }
                     else
@@ -1130,43 +1136,47 @@ public class NetServerHandler extends NetHandler
                         try
                         {
                             var2 = new DataInputStream(new ByteArrayInputStream(par1Packet250CustomPayload.data));
-                            var14 = var2.readInt();
-                            var18 = var2.readInt();
-                            ContainerBeacon var17 = (ContainerBeacon)this.playerEntity.openContainer;
-                            Slot var19 = var17.getSlot(0);
+                            var5 = var2.readInt();
+                            var15 = var2.readInt();
+                            ContainerBeacon var16 = (ContainerBeacon)this.playerEntity.openContainer;
+                            Slot var18 = var16.getSlot(0);
 
-                            if (var19.getHasStack())
+                            if (var18.getHasStack())
                             {
-                                var19.decrStackSize(1);
-                                TileEntityBeacon var20 = var17.func_82863_d();
-                                var20.func_82128_d(var14);
-                                var20.func_82127_e(var18);
-                                var20.onInventoryChanged();
+                                var18.decrStackSize(1);
+                                TileEntityBeacon var19 = var16.func_82863_d();
+                                var19.func_82128_d(var5);
+                                var19.func_82127_e(var15);
+                                var19.onInventoryChanged();
                             }
                         }
-                        catch (Exception var8)
+                        catch (Exception var10)
                         {
-                            var8.printStackTrace();
+                            var10.printStackTrace();
                         }
                     }
                 }
                 else if ("MC|ItemName".equals(par1Packet250CustomPayload.channel) && this.playerEntity.openContainer instanceof ContainerRepair)
                 {
-                    ContainerRepair var13 = (ContainerRepair)this.playerEntity.openContainer;
+                    ContainerRepair var17 = (ContainerRepair)this.playerEntity.openContainer;
 
                     if (par1Packet250CustomPayload.data != null && par1Packet250CustomPayload.data.length >= 1)
                     {
-                        String var15 = ChatAllowedCharacters.filerAllowedCharacters(new String(par1Packet250CustomPayload.data));
+                        var8 = ChatAllowedCharacters.filerAllowedCharacters(new String(par1Packet250CustomPayload.data));
 
-                        if (var15.length() <= 30)
+                        if (var8.length() <= 30)
                         {
-                            var13.func_82850_a(var15);
+                            var17.func_82850_a(var8);
                         }
                     }
                     else
                     {
-                        var13.func_82850_a("");
+                        var17.func_82850_a("");
                     }
+                }
+                else
+                {
+                    ModLoader.serverCustomPayload(this, par1Packet250CustomPayload);
                 }
             }
         }

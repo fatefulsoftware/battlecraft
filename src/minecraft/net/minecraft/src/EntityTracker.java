@@ -136,6 +136,20 @@ public class EntityTracker
         {
             this.addEntityToTracker(par1Entity, 160, Integer.MAX_VALUE, false);
         }
+        else
+        {
+            Iterator var5 = ModLoader.getTrackers().values().iterator();
+
+            while (var5.hasNext())
+            {
+                EntityTrackerNonliving var6 = (EntityTrackerNonliving)var5.next();
+
+                if (var6.entityClass.isAssignableFrom(par1Entity.getClass()))
+                {
+                    this.addEntityToTracker(par1Entity, var6.viewDistance, var6.updateFrequency, var6.trackMotion);
+                }
+            }
+        }
     }
 
     public void addEntityToTracker(Entity par1Entity, int par2, int par3)
@@ -202,18 +216,18 @@ public class EntityTracker
             }
         }
 
-        for (int var6 = 0; var6 < var1.size(); ++var6)
+        for (int var7 = 0; var7 < var1.size(); ++var7)
         {
-            EntityPlayerMP var7 = (EntityPlayerMP)var1.get(var6);
-            Iterator var4 = this.trackedEntities.iterator();
+            EntityPlayerMP var4 = (EntityPlayerMP)var1.get(var7);
+            Iterator var5 = this.trackedEntities.iterator();
 
-            while (var4.hasNext())
+            while (var5.hasNext())
             {
-                EntityTrackerEntry var5 = (EntityTrackerEntry)var4.next();
+                EntityTrackerEntry var6 = (EntityTrackerEntry)var5.next();
 
-                if (var5.myEntity != var7)
+                if (var6.myEntity != var4)
                 {
-                    var5.tryStartWachingThis(var7);
+                    var6.tryStartWachingThis(var4);
                 }
             }
         }

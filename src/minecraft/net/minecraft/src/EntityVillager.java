@@ -3,6 +3,7 @@ package net.minecraft.src;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -440,7 +441,7 @@ public class EntityVillager extends EntityAgeable implements INpc, IMerchant
 
         MerchantRecipeList var2;
         var2 = new MerchantRecipeList();
-        label48:
+        label49:
 
         switch (this.getProfession())
         {
@@ -489,7 +490,7 @@ public class EntityVillager extends EntityAgeable implements INpc, IMerchant
                 {
                     if (var6 >= var5)
                     {
-                        break label48;
+                        break label49;
                     }
 
                     int var7 = var4[var6];
@@ -544,6 +545,8 @@ public class EntityVillager extends EntityAgeable implements INpc, IMerchant
                 addBlacksmithItem(var2, Item.beefCooked.shiftedIndex, this.rand, this.func_82188_j(0.3F));
         }
 
+        this.addModTrades(var2);
+
         if (var2.isEmpty())
         {
             addMerchantItem(var2, Item.ingotGold.shiftedIndex, this.rand, 1.0F);
@@ -559,6 +562,30 @@ public class EntityVillager extends EntityAgeable implements INpc, IMerchant
         for (int var8 = 0; var8 < par1 && var8 < var2.size(); ++var8)
         {
             this.buyingList.addToListWithCheck((MerchantRecipe)var2.get(var8));
+        }
+    }
+
+    private void addModTrades(MerchantRecipeList var1)
+    {
+        List var2 = ModLoader.getTrades(this.getProfession());
+
+        if (var2 != null)
+        {
+            Iterator var3 = var2.iterator();
+
+            while (var3.hasNext())
+            {
+                TradeEntry var4 = (TradeEntry)var3.next();
+
+                if (var4.buying)
+                {
+                    addMerchantItem(var1, var4.id, this.rand, var4.chance);
+                }
+                else
+                {
+                    addBlacksmithItem(var1, var4.id, this.rand, var4.chance);
+                }
+            }
         }
     }
 
@@ -743,5 +770,24 @@ public class EntityVillager extends EntityAgeable implements INpc, IMerchant
         blacksmithSellingList.put(Integer.valueOf(Item.chickenCooked.shiftedIndex), new Tuple(Integer.valueOf(-8), Integer.valueOf(-6)));
         blacksmithSellingList.put(Integer.valueOf(Item.eyeOfEnder.shiftedIndex), new Tuple(Integer.valueOf(7), Integer.valueOf(11)));
         blacksmithSellingList.put(Integer.valueOf(Item.arrow.shiftedIndex), new Tuple(Integer.valueOf(-12), Integer.valueOf(-8)));
+        List var0 = ModLoader.getTrades(-1);
+        Iterator var1 = var0.iterator();
+
+        while (var1.hasNext())
+        {
+            TradeEntry var2 = (TradeEntry)var1.next();
+
+            if (var2.buying)
+            {
+                if (var2.min > 0 && var2.max > 0)
+                {
+                    villagerStockList.put(Integer.valueOf(var2.id), new Tuple(Integer.valueOf(var2.min), Integer.valueOf(var2.max)));
+                }
+            }
+            else if (var2.min > 0 && var2.max > 0)
+            {
+                blacksmithSellingList.put(Integer.valueOf(var2.id), new Tuple(Integer.valueOf(var2.min), Integer.valueOf(var2.max)));
+            }
+        }
     }
 }

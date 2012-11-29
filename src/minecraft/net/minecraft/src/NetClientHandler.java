@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -159,6 +160,7 @@ public class NetClientHandler extends NetHandler
         this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
         this.mc.playerController.setGameType(par1Packet1Login.gameType);
         this.mc.gameSettings.sendSettingsToServer();
+        ModLoader.clientConnect(this, par1Packet1Login);
     }
 
     public void handlePickupSpawn(Packet21PickupSpawn par1Packet21PickupSpawn)
@@ -275,6 +277,21 @@ public class NetClientHandler extends NetHandler
             var8 = new EntityFallingSand(this.worldClient, var2, var4, var6, par1Packet23VehicleSpawn.throwerEntityId & 65535, par1Packet23VehicleSpawn.throwerEntityId >> 16);
             par1Packet23VehicleSpawn.throwerEntityId = 0;
         }
+        else
+        {
+            Iterator var14 = ModLoader.getTrackers().values().iterator();
+
+            while (var14.hasNext())
+            {
+                EntityTrackerNonliving var11 = (EntityTrackerNonliving)var14.next();
+
+                if (par1Packet23VehicleSpawn.type == var11.id)
+                {
+                    var8 = var11.mod.spawnEntity(par1Packet23VehicleSpawn.type, this.worldClient, var2, var4, var6);
+                    break;
+                }
+            }
+        }
 
         if (var8 != null)
         {
@@ -288,15 +305,15 @@ public class NetClientHandler extends NetHandler
                 ((Entity)var8).rotationPitch = 0.0F;
             }
 
-            Entity[] var14 = ((Entity)var8).getParts();
+            Entity[] var15 = ((Entity)var8).getParts();
 
-            if (var14 != null)
+            if (var15 != null)
             {
-                int var11 = par1Packet23VehicleSpawn.entityId - ((Entity)var8).entityId;
+                int var13 = par1Packet23VehicleSpawn.entityId - ((Entity)var8).entityId;
 
-                for (int var12 = 0; var12 < var14.length; ++var12)
+                for (int var12 = 0; var12 < var15.length; ++var12)
                 {
-                    var14[var12].entityId += var11;
+                    var15[var12].entityId += var13;
                 }
             }
 
@@ -307,12 +324,12 @@ public class NetClientHandler extends NetHandler
             {
                 if (par1Packet23VehicleSpawn.type == 60)
                 {
-                    Entity var13 = this.getEntityByID(par1Packet23VehicleSpawn.throwerEntityId);
+                    Entity var17 = this.getEntityByID(par1Packet23VehicleSpawn.throwerEntityId);
 
-                    if (var13 instanceof EntityLiving)
+                    if (var17 instanceof EntityLiving)
                     {
-                        EntityArrow var15 = (EntityArrow)var8;
-                        var15.shootingEntity = var13;
+                        EntityArrow var16 = (EntityArrow)var8;
+                        var16.shootingEntity = var17;
                     }
                 }
 
@@ -602,6 +619,7 @@ public class NetClientHandler extends NetHandler
     {
         this.netManager.networkShutdown("disconnect.kicked", new Object[0]);
         this.disconnected = true;
+        ModLoader.clientDisconnect();
         this.mc.loadWorld((WorldClient)null);
         this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
     }
@@ -611,6 +629,7 @@ public class NetClientHandler extends NetHandler
         if (!this.disconnected)
         {
             this.disconnected = true;
+            ModLoader.clientDisconnect();
             this.mc.loadWorld((WorldClient)null);
             this.mc.displayGuiScreen(new GuiDisconnected("disconnect.lost", par1Str, par2ArrayOfObj));
         }
@@ -665,6 +684,7 @@ public class NetClientHandler extends NetHandler
     public void handleChat(Packet3Chat par1Packet3Chat)
     {
         this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
+        ModLoader.clientChat(par1Packet3Chat.message);
     }
 
     public void handleAnimation(Packet18Animation par1Packet18Animation)
@@ -710,13 +730,10 @@ public class NetClientHandler extends NetHandler
     {
         Entity var2 = this.getEntityByID(par1Packet17Sleep.entityID);
 
-        if (var2 != null)
+        if (var2 != null && par1Packet17Sleep.field_73622_e == 0)
         {
-            if (par1Packet17Sleep.field_73622_e == 0)
-            {
-                EntityPlayer var3 = (EntityPlayer)var2;
-                var3.sleepInBedAt(par1Packet17Sleep.bedX, par1Packet17Sleep.bedY, par1Packet17Sleep.bedZ);
-            }
+            EntityPlayer var3 = (EntityPlayer)var2;
+            var3.sleepInBedAt(par1Packet17Sleep.bedX, par1Packet17Sleep.bedY, par1Packet17Sleep.bedZ);
         }
     }
 
@@ -726,6 +743,7 @@ public class NetClientHandler extends NetHandler
     public void disconnect()
     {
         this.disconnected = true;
+        ModLoader.clientDisconnect();
         this.netManager.wakeThreads();
         this.netManager.networkShutdown("disconnect.closed", new Object[0]);
     }
@@ -922,6 +940,9 @@ public class NetClientHandler extends NetHandler
             case 8:
                 var2.displayGUIAnvil(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
                 var2.openContainer.windowId = par1Packet100OpenWindow.windowId;
+
+            default:
+                ModLoader.clientOpenWindow(par1Packet100OpenWindow);
         }
     }
 
@@ -1355,6 +1376,10 @@ public class NetClientHandler extends NetHandler
             {
                 var7.printStackTrace();
             }
+        }
+        else
+        {
+            ModLoader.clientCustomPayload(par1Packet250CustomPayload);
         }
     }
 
