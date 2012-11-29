@@ -6,13 +6,13 @@ public class mod_Battlecraft extends BaseMod {
     public static final Block sandbagBlock = (new SandbagBlock(200));
 	
 	public mod_Battlecraft () {
-        ModLoader.addName(sandbagBlock, sandbagBlock.getBlockName());
+        ModLoader.addName(sandbagBlock, "Sandbag");
         ModLoader.addRecipe(new ItemStack(sandbagBlock), new Object[] {
 			"XXX", "XSX", "XXX", 'X', Block.cloth, 'S', Block.sand
 		});
         ModLoader.registerBlock(sandbagBlock);
         
-        ModLoader.addName(grenadeLauncher, grenadeLauncher.getItemName());
+        ModLoader.addName(grenadeLauncher, "Grenade Launcher");
         ModLoader.addRecipe(new ItemStack(grenadeLauncher), new Object[] {
 			"XXX", " X ", 'X', Item.ingotIron
 		});

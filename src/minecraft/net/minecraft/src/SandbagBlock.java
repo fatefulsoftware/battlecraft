@@ -6,9 +6,9 @@ public class SandbagBlock extends Block {
 	protected SandbagBlock (int par1, Material par3Material) {
 		super(par1, material);
 		
-		blockIndexInTexture = ModLoader.addOverride("/terrain.png", "/BattlecraftTextures/sandbag.png");
+		blockIndexInTexture = ModLoader.addOverride("/terrain.png", "/battlecraft/sandbags.png");
 		
-		setBlockName("Sandbag");
+		setBlockName("sandbag");
 	}
 	
 	protected SandbagBlock (int par1) {

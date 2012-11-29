@@ -9,9 +9,9 @@ public class GrenadeLauncherItem extends Item {
         maxStackSize = 1;
         setMaxDamage(1000);
         setCreativeTab(CreativeTabs.tabCombat);
-        setItemName("Grenade Launcher");
+        setItemName("grenadeLauncher");
         setFull3D();
-        iconIndex = ModLoader.addOverride("/terrain.png", "/BattlecraftTextures/grenadelauncher.png");
+        iconIndex = ModLoader.addOverride("/gui/items.png", "/battlecraft/grenadelauncher.png");
     }
 
     /**
@@ -100,5 +100,10 @@ public class GrenadeLauncherItem extends Item {
     @Override
     public int getDamageVsEntity (Entity par1Entity) {
         return damage;
+    }
+
+    @Override
+    public boolean shouldRotateAroundWhenRendering () {
+        return true;
     }
 }
