@@ -202,9 +202,6 @@ public class Block
     public static final Block skull = (new BlockSkull(144)).setHardness(1.0F).setStepSound(soundStoneFootstep).setBlockName("skull").setRequiresSelfNotify();
     public static final Block anvil = (new BlockAnvil(145)).setHardness(5.0F).setStepSound(soundAnvilFootstep).setResistance(2000.0F).setBlockName("anvil").setRequiresSelfNotify();
 
-    // battlecraft
-    public static final Block sandbag = (new SandbagBlock(146));
-
     /**
      * The index of the texture to be displayed for this block. May vary based on graphics settings. Mostly seems to
      * come from terrain.png, and the index is 0-based (grass is 0).

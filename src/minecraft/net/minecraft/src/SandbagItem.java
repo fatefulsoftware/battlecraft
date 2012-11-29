@@ -2,8 +2,10 @@ package net.minecraft.src;
 
 public class SandbagItem extends ItemBlock {
 	public SandbagItem () {
-		super(Block.sandbag.blockID - 256);
+		super(146/*mod_Battlecraft.sandbagBlock.blockID*/ - 256);
 		
-		setItemName(Block.sandbag.getBlockName());
+		//setItemName(mod_Battlecraft.sandbagBlock.getBlockName());
+
+		//setIconIndex(ModLoader.addOverride("/gui/items.png", "/battlecrafttextures/Sandbag.png"));
 	}
 }
