@@ -184,6 +184,7 @@ public class Item
 
     // battlecraft
     public static Item sandbag = (new SandbagItem());
+    public static Item grenadeLauncher = (new GrenadeLauncherItem(145));
 
     /** Item index + 256 */
     public final int shiftedIndex;
