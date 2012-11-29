@@ -8,7 +8,7 @@ public class SandbagBlock extends Block {
 		
 		this.blockIndexInTexture = Block.stoneBrick.blockIndexInTexture;
 		
-		setBlockName("sandbag");
+		setBlockName("Sandbag");
 	}
 	
 	protected SandbagBlock (int par1) {

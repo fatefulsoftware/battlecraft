@@ -1,18 +1,18 @@
 package net.minecraft.src;
 
 public class mod_Battlecraft extends BaseMod {
-	//public static final Item sandbag = new SandbagItem();
     public static final Item grenadeLauncher = (new GrenadeLauncherItem(201));
 
-    //public static final Block sandbagBlock = (new SandbagBlock(200));
+    public static final Block sandbagBlock = (new SandbagBlock(200));
 	
 	public mod_Battlecraft () {
-        //ModLoader.addName(sandbag, "Sandbag");
+        ModLoader.addName(sandbagBlock, sandbagBlock.getBlockName());
+        ModLoader.addRecipe(new ItemStack(sandbagBlock), new Object[] {
+			"X", Character.valueOf('X'), Block.cobblestone
+		});
+        ModLoader.registerBlock(sandbagBlock);
         
-        //ModLoader.addName(sandbagBlock, "Sandbag");
-        //ModLoader.registerBlock(sandbagBlock);
-        
-        ModLoader.addName(grenadeLauncher, "Grenade Launcher");
+        ModLoader.addName(grenadeLauncher, grenadeLauncher.getItemName());
         ModLoader.addRecipe(new ItemStack(grenadeLauncher), new Object[] {
 			"X", Character.valueOf('X'), Block.dirt
 		});

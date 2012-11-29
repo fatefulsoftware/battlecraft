@@ -9,7 +9,7 @@ public class GrenadeLauncherItem extends Item {
         maxStackSize = 1;
         setMaxDamage(1000);
         setCreativeTab(CreativeTabs.tabCombat);
-        setItemName("grenadeLauncher");
+        setItemName("Grenade Launcher");
         setFull3D();
         setIconCoord(5, 1);
     }
