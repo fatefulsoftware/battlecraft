@@ -11,29 +11,10 @@ public class GrenadeLauncherItem extends Item {
         setFull3D();
         iconIndex = ModLoader.addOverride("/gui/items.png", "/battlecraft/grenadelauncher.png");
     }
-
-    public ItemStack onFoodEaten (ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
-        return par1ItemStack;
-    }
-
-    /**
-     * How long it takes to use or consume an item
-     */
-    public int getMaxItemUseDuration(ItemStack par1ItemStack) {
-        return 0;
-    }
-
-    /**
-     * returns the action that specifies what animation to play when the items is being used
-     */
-    public EnumAction getItemUseAction(ItemStack par1ItemStack) {
-        return EnumAction.none;
-    }
-
-    /**
-     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
-     */
-    public ItemStack onItemRightClick (ItemStack par1ItemStack, World world, EntityPlayer player) {
+    
+    @Override
+    public ItemStack onItemRightClick(ItemStack par1ItemStack, World world,
+    		EntityPlayer player) {
         // has ammo
         if (player.capabilities.isCreativeMode || player.inventory.hasItem(mod_Battlecraft.grenade.shiftedIndex)) {
             GrenadeEntity var8 = new GrenadeEntity(world, player);
@@ -50,27 +31,12 @@ public class GrenadeLauncherItem extends Item {
         
         return par1ItemStack;
     }
-
-    /**
-     * Return the enchantability factor of the item, most of the time is based on material.
-     */
-    public int getItemEnchantability() {
-        return 0;
-    }
     
     @Override
     public boolean hitEntity (ItemStack par1ItemStack, EntityLiving par2EntityLiving, EntityLiving par3EntityLiving) {
     	par1ItemStack.damageItem(1, par2EntityLiving);
     	
     	return true;
-    }
-
-    /**
-     * Returns the damage against a given entity.
-     */
-    @Override
-    public int getDamageVsEntity (Entity par1Entity) {
-        return 1;
     }
 
     @Override

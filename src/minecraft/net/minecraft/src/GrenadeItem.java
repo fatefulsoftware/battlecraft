@@ -11,13 +11,19 @@ public class GrenadeItem extends Item {
 	}
 	
 	@Override
-	public ItemStack onItemRightClick (ItemStack par1ItemStack, World world,
-			EntityPlayer par3EntityPlayer) {
-		world.spawnEntityInWorld(new GrenadeEntity(world, par3EntityPlayer));
+	public ItemStack onItemRightClick(ItemStack par1ItemStack, World world,
+			EntityPlayer player) {
+		world.spawnEntityInWorld(new GrenadeEntity(world, player));
 
-		//par1ItemStack.stackSize--;
-        par3EntityPlayer.inventory.consumeInventoryItem(mod_Battlecraft.grenade.shiftedIndex);
+		player.inventory.consumeInventoryItem(mod_Battlecraft.grenade.shiftedIndex);
 		
 		return par1ItemStack;
 	}
+    
+    @Override
+    public boolean hitEntity (ItemStack par1ItemStack, EntityLiving par2EntityLiving, EntityLiving par3EntityLiving) {
+    	par1ItemStack.damageItem(1, par2EntityLiving);
+    	
+    	return true;
+    }
 }

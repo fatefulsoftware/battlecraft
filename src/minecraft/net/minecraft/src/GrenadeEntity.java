@@ -13,30 +13,36 @@ public class GrenadeEntity extends EntityItem {
 		
 		setUp();
 	}
+    
+    public GrenadeEntity (World world, double x, double y, double z, float yaw, float pitch, double force, int fuseLength) {
+        this(world);
+        
+    	setRotation(yaw, 0);
+    	
+        // Set the velocity
+    	double xHeading = -MathHelper.sin((yaw * 3.141593F) / 180F);
+    	double zHeading = MathHelper.cos((yaw * 3.141593F) / 180F);
+        motionX = force*xHeading*MathHelper.cos((pitch / 180F) * 3.141593F);
+        motionY = -force*MathHelper.sin((pitch / 180F) * 3.141593F);
+        motionZ = force*zHeading*MathHelper.cos((pitch / 180F) * 3.141593F);
+    	
+        // Set the position
+        setPosition(x+xHeading*0.8, y, z+zHeading*0.8);
+        prevPosX = posX;
+        prevPosY = posY;
+        prevPosZ = posZ;
+        
+        fuse = fuseLength;
+    }
+
+    public GrenadeEntity (World world, Entity entity) {
+        this(world, entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch, 1, 50);
+    }
 
 	public GrenadeEntity (World par1World) {
 		super(par1World);
 		
 		setUp();
-	}
-	
-	public GrenadeEntity (World world, Entity entity) {
-		this(world);
-		
-		setRotation(entity.rotationYaw, 0);
-
-        double xHeading = -MathHelper.sin((entity.rotationYaw * 3.141593F) / 180F);
-        double zHeading = MathHelper.cos((entity.rotationYaw * 3.141593F) / 180F);
-        
-        motionX = 0.5*xHeading*MathHelper.cos((entity.rotationPitch / 180F) * 3.141593F);
-        motionY = -0.5*MathHelper.sin((entity.rotationPitch / 180F) * 3.141593F);
-        motionZ = 0.5*zHeading*MathHelper.cos((entity.rotationPitch / 180F) * 3.141593F);
-        
-        // Set the position
-        setPosition(entity.posX+xHeading*0.8, entity.posY, entity.posZ+zHeading*0.8);
-		prevPosX = posX;
-		prevPosY = posY;
-		prevPosZ = posZ;
 	}
 	
 	protected void setUp () {
@@ -47,8 +53,6 @@ public class GrenadeEntity extends EntityItem {
 		fuse = 50;
 		
 		item = new ItemStack(mod_Battlecraft.grenade);
-		
-		setDead();
 	}
 
 	@Override
@@ -97,6 +101,8 @@ public class GrenadeEntity extends EntityItem {
             worldObj.createExplosion(null, posX, posY, posZ, 2F, false);
             
             //worldObj.removeEntity(this);
+            
+            setDead();
         }
     }
     
