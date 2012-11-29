@@ -11,7 +11,7 @@ public class GrenadeLauncherItem extends Item {
         setCreativeTab(CreativeTabs.tabCombat);
         setItemName("Grenade Launcher");
         setFull3D();
-        setIconCoord(5, 1);
+        iconIndex = ModLoader.addOverride("/terrain.png", "/BattlecraftTextures/grenadelauncher.png");
     }
 
     /**
