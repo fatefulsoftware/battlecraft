@@ -103,6 +103,8 @@ public abstract class ServerConfigurationManager
         }
 
         par2EntityPlayerMP.addSelfToInternalCraftingInventory();
+        
+        
     }
 
     /**
@@ -172,6 +174,9 @@ public abstract class ServerConfigurationManager
             EntityPlayerMP var4 = (EntityPlayerMP)this.playerEntityList.get(var3);
             par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet201PlayerInfo(var4.username, true, var4.ping));
         }
+        
+        // battlecraft
+        BattlecraftPlayerTracker.getSharedInstance().notifyPlayerJoined(par1EntityPlayerMP);
     }
 
     /**
@@ -193,6 +198,9 @@ public abstract class ServerConfigurationManager
         var2.getPlayerManager().removePlayer(par1EntityPlayerMP);
         this.playerEntityList.remove(par1EntityPlayerMP);
         this.sendPacketToAllPlayers(new Packet201PlayerInfo(par1EntityPlayerMP.username, false, 9999));
+        
+        // battlecraft
+        BattlecraftPlayerTracker.getSharedInstance().notifyPlayerLeft(par1EntityPlayerMP);
     }
 
     /**
