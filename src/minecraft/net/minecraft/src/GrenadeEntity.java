@@ -104,10 +104,8 @@ public class GrenadeEntity extends EntityItem {
     protected void explode() {
         if (!exploded) {
             exploded = true;
-            
-            worldObj.createExplosion(null, posX, posY, posZ, 2F, true);
-            
-            //worldObj.removeEntity(this);
+
+            worldObj.newExplosion(null, posX, posY, posZ, 2F, true, true);
             
             setDead();
         }
