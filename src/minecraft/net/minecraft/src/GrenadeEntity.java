@@ -1,7 +1,7 @@
 package net.minecraft.src;
 
 public class GrenadeEntity extends EntityItem {
-	protected static final int damage = 20;
+	protected static final int damage = 40;
 	
 	protected double bounceFactor;
 	protected boolean exploded;
@@ -98,7 +98,7 @@ public class GrenadeEntity extends EntityItem {
         if (!exploded) {
             exploded = true;
             
-            worldObj.createExplosion(null, posX, posY, posZ, 2F, false);
+            worldObj.createExplosion(null, posX, posY, posZ, 2F, true);
             
             //worldObj.removeEntity(this);
             
