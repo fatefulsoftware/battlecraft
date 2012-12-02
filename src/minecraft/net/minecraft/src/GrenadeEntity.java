@@ -68,16 +68,23 @@ public class GrenadeEntity extends EntityItem {
         // Take into account bouncing (normal displacement just sets them to 0)
         if(motionX!=prevVelX)
         {
-                motionX = -bounceFactor*prevVelX;
+        	explode();
+        	
+        	return;
         }
+        
         if(motionY!=prevVelY)
         {
-                motionY = -bounceFactor*prevVelY;
+        	explode();
+        	
+        	return;
         }
         
         if(motionZ!=prevVelZ)
         {
-                motionZ = -bounceFactor*prevVelZ;
+        	explode();
+        	
+        	return;
         }
         else
         {

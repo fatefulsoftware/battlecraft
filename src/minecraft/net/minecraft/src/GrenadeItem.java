@@ -1,6 +1,10 @@
 package net.minecraft.src;
 
+import java.util.Date;
+
 public class GrenadeItem extends Item {
+	long lastThrown;
+	
 	public GrenadeItem (int par1) {
 		super(par1);
 		
@@ -13,6 +17,15 @@ public class GrenadeItem extends Item {
 	@Override
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World world,
 			EntityPlayer player) {
+		long now;
+		
+		now = new Date().getTime();
+		
+		if (lastThrown != 0 && (now - lastThrown) < 1000)
+			return par1ItemStack;
+		
+		lastThrown = now;
+		
 		world.spawnEntityInWorld(new GrenadeEntity(world, player));
 
 		player.inventory.consumeInventoryItem(mod_Battlecraft.grenade.shiftedIndex);
