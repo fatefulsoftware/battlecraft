@@ -57,51 +57,37 @@ public class GrenadeEntity extends EntityItem {
 
 	@Override
 	public void onUpdate() {
-        double prevVelX = motionX;
-        double prevVelY = motionY;
-        double prevVelZ = motionZ;
+		double prevVelX, prevVelY, prevVelZ;
+		
+        prevVelX = motionX;
+        prevVelY = motionY;
+        prevVelZ = motionZ;
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
+
         moveEntity(motionX, motionY, motionZ);
         
-        // Take into account bouncing (normal displacement just sets them to 0)
-        if(motionX!=prevVelX)
-        {
+        // collided
+        if (motionX!=prevVelX || motionY!=prevVelY || motionZ!=prevVelZ) {
         	explode();
-        	
-        	return;
-        }
-        
-        if(motionY!=prevVelY)
-        {
-        	explode();
-        	
-        	return;
-        }
-        
-        if(motionZ!=prevVelZ)
-        {
-        	explode();
-        	
-        	return;
-        }
-        else
-        {
+        } else {
+        	// gravity
+            if (motionZ == prevVelZ)
                 motionY -= 0.04;
+            
+            // Air friction
+	        motionX *= 0.99;
+	        motionY *= 0.99;
+	        motionZ *= 0.99;
+	        
+            // fuse
+            if (--fuse <= 0)
+            	explode();
         }
-        
-        // Air friction
-        motionX *= 0.99;
-        motionY *= 0.99;
-        motionZ *= 0.99;
-        
-        // Are we going to explode?
-        if (--fuse <= 0)
-            explode();
     }
 
-    protected void explode() {
+    protected void explode () {
         if (!exploded) {
             exploded = true;
 
@@ -109,6 +95,13 @@ public class GrenadeEntity extends EntityItem {
             
             setDead();
         }
+    }
+    
+    @Override
+    public void setDead () {
+    	motionX = motionY = motionZ = 0;
+    	
+    	super.setDead();
     }
     
     @Override
