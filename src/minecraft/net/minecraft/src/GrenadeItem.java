@@ -1,9 +1,12 @@
 package net.minecraft.src;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GrenadeItem extends Item {
-	long lastThrown;
+	static Map<EntityPlayer, Long> lastTimestamps = new HashMap<EntityPlayer, Long>();
 	
 	public GrenadeItem (int par1) {
 		super(par1);
@@ -15,22 +18,30 @@ public class GrenadeItem extends Item {
 	}
 	
 	@Override
-	public ItemStack onItemRightClick(ItemStack par1ItemStack, World world,
+	public ItemStack onItemRightClick (ItemStack par1ItemStack, World world,
 			EntityPlayer player) {
-		long now;
+		long now, last;
+		Long obj;
 		
-		now = new Date().getTime();
+		obj = lastTimestamps.get(player);
 		
-		if (lastThrown != 0 && (now - lastThrown) < 1000)
-			return par1ItemStack;
+		if (obj == null)
+			last = 0;
+		else
+			last = obj.longValue();
 		
-		lastThrown = now;
+		now = Calendar.getInstance().getTime().getTime();
 		
-		world.spawnEntityInWorld(new GrenadeEntity(world, player));
-
-		player.inventory.consumeInventoryItem(mod_Battlecraft.grenade.shiftedIndex);
+		// TODO: for some reason skipping this custom logic *some* of the time causes explosion and click sounds not to play
+		if (last == 0 || (now - last) >= 1000) {
+			lastTimestamps.put(player, Long.valueOf(now));
+			
+	        par1ItemStack.stackSize--;
+			
+	        world.spawnEntityInWorld(new GrenadeEntity(world, player));
+		}
 		
-		return par1ItemStack;
+		return super.onItemRightClick(par1ItemStack, world, player);
 	}
     
     @Override

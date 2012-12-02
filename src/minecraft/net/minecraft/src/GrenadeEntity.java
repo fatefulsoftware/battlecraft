@@ -49,7 +49,7 @@ public class GrenadeEntity extends EntityItem {
 		setSize(.5F, .5F);
 		
 		yOffset = height / 2F;
-		bounceFactor = 0.75;
+		bounceFactor = 0.5;
 		fuse = 50;
 		
 		item = new ItemStack(mod_Battlecraft.grenade);
@@ -57,6 +57,7 @@ public class GrenadeEntity extends EntityItem {
 
 	@Override
 	public void onUpdate() {
+		boolean explode;
 		double prevVelX, prevVelY, prevVelZ;
 		
         prevVelX = motionX;
@@ -65,32 +66,49 @@ public class GrenadeEntity extends EntityItem {
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
-
+        
         moveEntity(motionX, motionY, motionZ);
         
-        // collided
-        if (motionX!=prevVelX || motionY!=prevVelY || motionZ!=prevVelZ) {
-        	explode();
-        } else {
-        	// gravity
-            if (motionZ == prevVelZ)
-                motionY -= 0.04;
+        explode = false;
+        
+        // Take into account bouncing (normal displacement just sets them to 0)
+        if (motionX != prevVelX) {
+            motionX = -bounceFactor * prevVelX;
             
-            // Air friction
-	        motionX *= 0.99;
-	        motionY *= 0.99;
-	        motionZ *= 0.99;
-	        
-            // fuse
-            if (--fuse <= 0)
-            	explode();
+            explode = true;
         }
+        
+        if (motionY != prevVelY) {
+            motionY = -bounceFactor * prevVelY;
+            
+            explode = true;
+        }
+        
+        if (motionZ != prevVelZ) {
+            motionZ = -bounceFactor * prevVelZ;
+            
+            explode = true;
+        } else {
+            motionY -= 0.04;
+        }
+        
+        // Air friction
+        motionX *= 0.99;
+        motionY *= 0.99;
+        motionZ *= 0.99;
+        
+        // fuse
+        if (--fuse <= 0)
+        	explode = true;
+        
+        if (explode)
+            explode();
     }
 
-    protected void explode () {
+    protected void explode() {
         if (!exploded) {
             exploded = true;
-
+            
             worldObj.newExplosion(null, posX, posY, posZ, 2F, true, true);
             
             setDead();
