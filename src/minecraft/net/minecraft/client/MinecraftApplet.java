@@ -1,12 +1,17 @@
 package net.minecraft.client;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+
+import cpw.mods.fml.relauncher.FMLRelauncher;
 import net.minecraft.src.CanvasMinecraftApplet;
 import net.minecraft.src.MinecraftAppletImpl;
 import net.minecraft.src.Session;
 
+@SideOnly(Side.CLIENT)
 public class MinecraftApplet extends Applet
 {
     /** Reference to the applet canvas. */
@@ -19,6 +24,11 @@ public class MinecraftApplet extends Applet
     private Thread mcThread = null;
 
     public void init()
+    {
+        FMLRelauncher.appletEntry(this);
+    }
+
+    public void fmlInitReentry()
     {
         this.mcCanvas = new CanvasMinecraftApplet(this);
         boolean var1 = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
@@ -65,6 +75,11 @@ public class MinecraftApplet extends Applet
     }
 
     public void start()
+    {
+        FMLRelauncher.appletStart(this);
+    }
+
+    public void fmlStartReentry()
     {
         if (this.mc != null)
         {

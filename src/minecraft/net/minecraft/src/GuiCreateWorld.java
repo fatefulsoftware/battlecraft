@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.Random;
 import org.lwjgl.input.Keyboard;
 
+@SideOnly(Side.CLIENT)
 public class GuiCreateWorld extends GuiScreen
 {
     private GuiScreen parentGuiScreen;
@@ -254,6 +257,7 @@ public class GuiCreateWorld extends GuiScreen
                     }
                 }
 
+                WorldType.worldTypes[this.worldTypeId].onGUICreateWorldPress();
                 EnumGameType var8 = EnumGameType.getByName(this.gameMode);
                 WorldSettings var6 = new WorldSettings(var2, var8, this.generateStructures, this.isHardcore, WorldType.worldTypes[this.worldTypeId]);
                 var6.func_82750_a(this.field_82290_a);

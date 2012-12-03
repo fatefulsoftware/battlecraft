@@ -1,7 +1,10 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.client.Minecraft;
 
+@SideOnly(Side.CLIENT)
 public class EntityClientPlayerMP extends EntityPlayerSP
 {
     public NetClientHandler sendQueue;
@@ -154,7 +157,7 @@ public class EntityClientPlayerMP extends EntityPlayerSP
     /**
      * Joins the passed in entity item with the world. Args: entityItem
      */
-    protected void joinEntityItemWithWorld(EntityItem par1EntityItem) {}
+    public void joinEntityItemWithWorld(EntityItem par1EntityItem) {}
 
     /**
      * Sends a chat message from the player. Args: chatMessage

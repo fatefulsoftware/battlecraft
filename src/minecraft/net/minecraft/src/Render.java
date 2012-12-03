@@ -1,7 +1,10 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public abstract class Render
 {
     protected RenderManager renderManager;
@@ -331,7 +334,7 @@ public abstract class Render
             }
         }
 
-        if (par1Entity.canRenderOnFire())
+        if (par1Entity.func_90999_ad())
         {
             this.renderEntityOnFire(par1Entity, par2, par4, par6, par9);
         }

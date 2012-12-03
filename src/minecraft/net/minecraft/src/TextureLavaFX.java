@@ -1,6 +1,11 @@
 package net.minecraft.src;
 
-public class TextureLavaFX extends TextureFX
+import cpw.mods.fml.client.FMLTextureFX;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public class TextureLavaFX extends FMLTextureFX
 {
     protected float[] field_76876_g = new float[256];
     protected float[] field_76878_h = new float[256];
@@ -10,6 +15,17 @@ public class TextureLavaFX extends TextureFX
     public TextureLavaFX()
     {
         super(Block.lavaMoving.blockIndexInTexture);
+		setup();
+    }
+
+    @Override
+    public void setup()
+    {
+        super.setup();
+        field_76876_g = new float[tileSizeSquare];
+        field_76878_h = new float[tileSizeSquare];
+        field_76879_i = new float[tileSizeSquare];
+        field_76877_j = new float[tileSizeSquare];
     }
 
     public void onTick()
@@ -22,9 +38,9 @@ public class TextureLavaFX extends TextureFX
         int var8;
         int var9;
 
-        for (int var1 = 0; var1 < 16; ++var1)
+        for (int var1 = 0; var1 < tileSizeBase; ++var1)
         {
-            for (var2 = 0; var2 < 16; ++var2)
+            for (var2 = 0; var2 < tileSizeBase; ++var2)
             {
                 var3 = 0.0F;
                 int var4 = (int)(MathHelper.sin((float)var2 * (float)Math.PI * 2.0F / 16.0F) * 1.2F);
@@ -34,25 +50,25 @@ public class TextureLavaFX extends TextureFX
                 {
                     for (var7 = var2 - 1; var7 <= var2 + 1; ++var7)
                     {
-                        var8 = var6 + var4 & 15;
-                        var9 = var7 + var5 & 15;
-                        var3 += this.field_76876_g[var8 + var9 * 16];
+                        var8 = var6 + var4 & tileSizeMask;
+                        var9 = var7 + var5 & tileSizeMask;
+                        var3 += this.field_76876_g[var8 + var9 * tileSizeBase];
                     }
                 }
 
-                this.field_76878_h[var1 + var2 * 16] = var3 / 10.0F + (this.field_76879_i[(var1 + 0 & 15) + (var2 + 0 & 15) * 16] + this.field_76879_i[(var1 + 1 & 15) + (var2 + 0 & 15) * 16] + this.field_76879_i[(var1 + 1 & 15) + (var2 + 1 & 15) * 16] + this.field_76879_i[(var1 + 0 & 15) + (var2 + 1 & 15) * 16]) / 4.0F * 0.8F;
-                this.field_76879_i[var1 + var2 * 16] += this.field_76877_j[var1 + var2 * 16] * 0.01F;
+                this.field_76878_h[var1 + var2 * tileSizeBase] = var3 / 10.0F + (this.field_76879_i[(var1 + 0 & tileSizeMask) + (var2 + 0 & tileSizeMask) * tileSizeBase] + this.field_76879_i[(var1 + 1 & tileSizeMask) + (var2 + 0 & tileSizeMask) * tileSizeBase] + this.field_76879_i[(var1 + 1 & tileSizeMask) + (var2 + 1 & tileSizeMask) * tileSizeBase] + this.field_76879_i[(var1 + 0 & tileSizeMask) + (var2 + 1 & tileSizeMask) * tileSizeBase]) / 4.0F * 0.8F;
+                this.field_76879_i[var1 + var2 * tileSizeBase] += this.field_76877_j[var1 + var2 * tileSizeBase] * 0.01F;
 
-                if (this.field_76879_i[var1 + var2 * 16] < 0.0F)
+                if (this.field_76879_i[var1 + var2 * tileSizeBase] < 0.0F)
                 {
-                    this.field_76879_i[var1 + var2 * 16] = 0.0F;
+                    this.field_76879_i[var1 + var2 * tileSizeBase] = 0.0F;
                 }
 
-                this.field_76877_j[var1 + var2 * 16] -= 0.06F;
+                this.field_76877_j[var1 + var2 * tileSizeBase] -= 0.06F;
 
                 if (Math.random() < 0.005D)
                 {
-                    this.field_76877_j[var1 + var2 * 16] = 1.5F;
+                    this.field_76877_j[var1 + var2 * tileSizeBase] = 1.5F;
                 }
             }
         }
@@ -61,7 +77,7 @@ public class TextureLavaFX extends TextureFX
         this.field_76878_h = this.field_76876_g;
         this.field_76876_g = var11;
 
-        for (var2 = 0; var2 < 256; ++var2)
+        for (var2 = 0; var2 < tileSizeSquare; ++var2)
         {
             var3 = this.field_76876_g[var2] * 2.0F;
 

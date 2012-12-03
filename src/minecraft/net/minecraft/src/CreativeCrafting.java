@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 
+@SideOnly(Side.CLIENT)
 public class CreativeCrafting implements ICrafting
 {
     private final Minecraft mc;

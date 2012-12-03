@@ -1,6 +1,9 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -13,9 +16,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
+
+import net.minecraftforge.client.ForgeHooksClient;
+
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.TextureFXManager;
+import cpw.mods.fml.common.FMLLog;
+
+@SideOnly(Side.CLIENT)
 public class RenderEngine
 {
     private HashMap textureMap = new HashMap();
@@ -31,7 +44,7 @@ public class RenderEngine
 
     /** Stores the image data for the texture. */
     private ByteBuffer imageData = GLAllocation.createDirectByteBuffer(16777216);
-    private List textureList = new ArrayList();
+    public List textureList = new ArrayList();
 
     /** A mapping from image URLs to ThreadDownloadImageData instances */
     private Map urlToImageDataMap = new HashMap();
@@ -46,10 +59,11 @@ public class RenderEngine
     public boolean blurTexture = false;
 
     /** Texture pack */
-    private TexturePackList texturePack;
+    public TexturePackList texturePack;
 
     /** Missing texture image */
     private BufferedImage missingTextureImage = new BufferedImage(64, 64, 2);
+    public static Logger log = FMLLog.getLogger();
 
     public RenderEngine(TexturePackList par1TexturePackList, GameSettings par2GameSettings)
     {
@@ -114,8 +128,9 @@ public class RenderEngine
                 this.textureContentsMap.put(par1Str, var7);
                 return var7;
             }
-            catch (IOException var6)
+            catch (Exception var6)
             {
+                log.log(Level.INFO, String.format("An error occured reading texture file %s (getTexture)", par1Str), var6);
                 var6.printStackTrace();
                 int[] var5 = this.getImageContentsAndAllocate(this.missingTextureImage);
                 this.textureContentsMap.put(par1Str, var5);
@@ -155,6 +170,7 @@ public class RenderEngine
 
             try
             {
+                ForgeHooksClient.onTextureLoadPre(par1Str);
                 this.singleIntBuffer.clear();
                 GLAllocation.generateTextureNames(this.singleIntBuffer);
                 int var3 = this.singleIntBuffer.get(0);
@@ -198,6 +214,7 @@ public class RenderEngine
                 }
 
                 this.textureMap.put(par1Str, Integer.valueOf(var3));
+                ForgeHooksClient.onTextureLoad(par1Str, var6);
                 return var3;
             }
             catch (Exception var5)
@@ -272,6 +289,7 @@ public class RenderEngine
 
         int var3 = par1BufferedImage.getWidth();
         int var4 = par1BufferedImage.getHeight();
+        TextureFXManager.instance().setTextureDimensions(par2, var3, var4, (List<TextureFX>)textureList);
         int[] var5 = new int[var3 * var4];
         byte[] var6 = new byte[var3 * var4 * 4];
         par1BufferedImage.getRGB(0, 0, var3, var4, var5, 0, var3);
@@ -397,10 +415,7 @@ public class RenderEngine
         return var3 != null && var3.textureName >= 0 ? var3.textureName : (par2Str == null ? -1 : this.getTexture(par2Str));
     }
 
-    /**
-     * Checks if urlToImageDataMap has image data for the given key
-     */
-    public boolean hasImageData(String par1Str)
+    public boolean func_82773_c(String par1Str)
     {
         return this.urlToImageDataMap.containsKey(par1Str);
     }
@@ -450,6 +465,7 @@ public class RenderEngine
 
     public void registerTextureFX(TextureFX par1TextureFX)
     {
+        TextureFXManager.instance().onPreRegisterEffect(par1TextureFX);
         this.textureList.add(par1TextureFX);
         par1TextureFX.onTick();
     }
@@ -462,31 +478,44 @@ public class RenderEngine
         {
             TextureFX var3 = (TextureFX)this.textureList.get(var2);
             var3.anaglyphEnabled = this.options.anaglyph;
-            var3.onTick();
-            var1 = this.updateDynamicTexture(var3, var1);
+            if (TextureFXManager.instance().onUpdateTextureEffect(var3))
+            {
+                var1 = this.func_82772_a(var3, var1);
+            }
         }
     }
 
-    /**
-     * Updates a single dynamic texture
-     */
-    public int updateDynamicTexture(TextureFX par1TextureFX, int par2)
+    public int func_82772_a(TextureFX par1TextureFX, int par2)
     {
-        this.imageData.clear();
-        this.imageData.put(par1TextureFX.imageData);
-        this.imageData.position(0).limit(par1TextureFX.imageData.length);
+        Dimension dim = TextureFXManager.instance().getTextureDimensions(par1TextureFX);
+        int tWidth  = dim.width >> 4;
+        int tHeight = dim.height >> 4;
+        int tLen = tWidth * tHeight << 2;
 
-        if (par1TextureFX.iconIndex != par2)
+        if (par1TextureFX.imageData.length == tLen)
+        {
+            this.imageData.clear();
+            this.imageData.put(par1TextureFX.imageData);
+            this.imageData.position(0).limit(par1TextureFX.imageData.length);
+        }
+        else
+        {
+            TextureFXManager.instance().scaleTextureFXData(par1TextureFX.imageData, imageData, tWidth, tLen);
+        }
+
+        if (par1TextureFX.textureId != par2)
         {
             par1TextureFX.bindImage(this);
-            par2 = par1TextureFX.iconIndex;
+            par2 = par1TextureFX.textureId;
         }
 
         for (int var3 = 0; var3 < par1TextureFX.tileSize; ++var3)
         {
+            int xOffset = par1TextureFX.iconIndex % 16 * tWidth + var3 * tWidth;
             for (int var4 = 0; var4 < par1TextureFX.tileSize; ++var4)
             {
-                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, par1TextureFX.iconIndex % 16 * 16 + var3 * 16, par1TextureFX.iconIndex / 16 * 16 + var4 * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.imageData);
+                int yOffset = par1TextureFX.iconIndex / 16 * tHeight + var4 * tHeight;
+                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.imageData);
             }
         }
 
@@ -555,8 +584,9 @@ public class RenderEngine
                 this.blurTexture = false;
                 this.clampTexture = false;
             }
-            catch (IOException var7)
+            catch (Exception var7)
             {
+                log.log(Level.INFO,String.format("An error occured reading texture file %s (refreshTexture)", var9),var7);
                 var7.printStackTrace();
             }
         }
@@ -592,8 +622,9 @@ public class RenderEngine
                 this.blurTexture = false;
                 this.clampTexture = false;
             }
-            catch (IOException var6)
+            catch (Exception var6)
             {
+                log.log(Level.INFO,String.format("An error occured reading texture file data %s (refreshTexture)", var9),var6);
                 var6.printStackTrace();
             }
         }

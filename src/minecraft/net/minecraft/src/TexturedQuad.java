@@ -1,5 +1,8 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
 public class TexturedQuad
 {
     public PositionTextureVertex[] vertexPositions;

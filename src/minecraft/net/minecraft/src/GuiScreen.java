@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.awt.Toolkit;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
@@ -12,9 +14,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class GuiScreen extends Gui
 {
-    public static final boolean isMacOs = Minecraft.getOs() == EnumOS.MACOS;
+    public static final boolean field_90017_e = Minecraft.getOs() == EnumOS.MACOS;
 
     /** Reference to the Minecraft object. */
     protected Minecraft mc;
@@ -196,7 +199,7 @@ public class GuiScreen extends Gui
             this.field_85042_b = -1;
             this.mouseMovedOrUp(var1, var2, Mouse.getEventButton());
         }
-        else if (this.mc.gameSettings.touchscreen && this.field_85042_b != -1 && this.field_85043_c > 0L)
+        else if (this.mc.gameSettings.field_85185_A && this.field_85042_b != -1 && this.field_85043_c > 0L)
         {
             long var3 = Minecraft.getSystemTime() - this.field_85043_c;
             this.func_85041_a(var1, var2, this.field_85042_b, var3);
@@ -219,7 +222,7 @@ public class GuiScreen extends Gui
                 return;
             }
 
-            if (isMacOs && var1 == 28 && var2 == 0)
+            if (field_90017_e && var1 == 28 && var2 == 0)
             {
                 var1 = 29;
             }
@@ -291,7 +294,7 @@ public class GuiScreen extends Gui
     public static boolean isCtrlKeyDown()
     {
         boolean var0 = Keyboard.isKeyDown(28) && Keyboard.getEventCharacter() == 0;
-        return Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157) || isMacOs && (var0 || Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220));
+        return Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157) || field_90017_e && (var0 || Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220));
     }
 
     public static boolean isShiftKeyDown()

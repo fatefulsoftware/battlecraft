@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+@SideOnly(Side.CLIENT)
 class GuiFlatPresetsListSlot extends GuiSlot
 {
     public int field_82459_a;

@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.Iterator;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class GuiGameOver extends GuiScreen
 {
     /**
@@ -63,7 +66,6 @@ public class GuiGameOver extends GuiScreen
                 this.mc.thePlayer.respawnPlayer();
                 this.mc.displayGuiScreen((GuiScreen)null);
                 break;
-
             case 2:
                 this.mc.theWorld.sendQuittingDisconnectingPacket();
                 this.mc.loadWorld((WorldClient)null);

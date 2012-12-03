@@ -1,7 +1,10 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class RenderFallingSand extends Render
 {
     private RenderBlocks renderBlocks = new RenderBlocks();
@@ -29,14 +32,14 @@ public class RenderFallingSand extends Render
             Tessellator var12 = Tessellator.instance;
             var12.startDrawingQuads();
             var12.setTranslation((double)((float)(-MathHelper.floor_double(par1EntityFallingSand.posX)) - 0.5F), (double)((float)(-MathHelper.floor_double(par1EntityFallingSand.posY)) - 0.5F), (double)((float)(-MathHelper.floor_double(par1EntityFallingSand.posZ)) - 0.5F));
-            this.renderBlocks.renderBlockAnvilMetadata((BlockAnvil)var10, MathHelper.floor_double(par1EntityFallingSand.posX), MathHelper.floor_double(par1EntityFallingSand.posY), MathHelper.floor_double(par1EntityFallingSand.posZ), par1EntityFallingSand.metadata);
+            this.renderBlocks.func_85096_a((BlockAnvil)var10, MathHelper.floor_double(par1EntityFallingSand.posX), MathHelper.floor_double(par1EntityFallingSand.posY), MathHelper.floor_double(par1EntityFallingSand.posZ), par1EntityFallingSand.metadata);
             var12.setTranslation(0.0D, 0.0D, 0.0D);
             var12.draw();
         }
         else if (var10 != null)
         {
-            this.renderBlocks.updateCustomBlockBounds(var10);
-            this.renderBlocks.renderBlockSandFalling(var10, var11, MathHelper.floor_double(par1EntityFallingSand.posX), MathHelper.floor_double(par1EntityFallingSand.posY), MathHelper.floor_double(par1EntityFallingSand.posZ), par1EntityFallingSand.metadata);
+            this.renderBlocks.func_83018_a(var10);
+            this.renderBlocks.func_78588_a(var10, var11, MathHelper.floor_double(par1EntityFallingSand.posX), MathHelper.floor_double(par1EntityFallingSand.posY), MathHelper.floor_double(par1EntityFallingSand.posZ), par1EntityFallingSand.metadata);
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);

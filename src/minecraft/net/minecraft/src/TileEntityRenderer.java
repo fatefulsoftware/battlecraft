@@ -1,16 +1,19 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class TileEntityRenderer
 {
     /**
      * A mapping of TileEntitySpecialRenderers used for each TileEntity that has one
      */
-    private Map specialRendererMap = new HashMap();
+    public Map specialRendererMap = new HashMap();
 
     /** The static instance of TileEntityRenderer */
     public static TileEntityRenderer instance = new TileEntityRenderer();

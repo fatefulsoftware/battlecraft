@@ -1,10 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+@SideOnly(Side.CLIENT)
 public class GuiMerchant extends GuiContainer
 {
     /** Instance of IMerchant interface. */
@@ -156,15 +159,15 @@ public class GuiMerchant extends GuiContainer
 
             if (this.func_74188_c(36, 24, 16, 16, par1, par2))
             {
-                this.drawItemStackTooltip(var9, par1, par2);
+                this.func_74184_a(var9, par1, par2);
             }
             else if (var10 != null && this.func_74188_c(62, 24, 16, 16, par1, par2))
             {
-                this.drawItemStackTooltip(var10, par1, par2);
+                this.func_74184_a(var10, par1, par2);
             }
             else if (this.func_74188_c(120, 24, 16, 16, par1, par2))
             {
-                this.drawItemStackTooltip(var11, par1, par2);
+                this.func_74184_a(var11, par1, par2);
             }
 
             GL11.glPopMatrix();

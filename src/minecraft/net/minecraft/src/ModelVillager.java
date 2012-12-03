@@ -1,5 +1,9 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class ModelVillager extends ModelBase
 {
     /** The head box of the VillagerModel */

@@ -1,5 +1,9 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 class GuiBeaconButtonConfirm extends GuiBeaconButton
 {
     /** Beacon GUI this button belongs to. */

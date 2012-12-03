@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.net.SocketAddress;
 import net.minecraft.server.MinecraftServer;
 
+@SideOnly(Side.CLIENT)
 public class IntegratedPlayerList extends ServerConfigurationManager
 {
     private NBTTagCompound tagsForLastWrittenPlayer = null;

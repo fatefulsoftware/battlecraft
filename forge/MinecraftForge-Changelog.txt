@@ -1,0 +1,66 @@
+Changelog:
+
+Build 1.4.5-6.4.1.410
+	cpw
+		Add in some additional ticket loading callbacks for ChickenBones. Closes #284
+		Add in a call to determine if there are possible chunktickets for a world. This should let
+		Mystcraft and other dynamic world generating mods check if they should immediately load
+		a world based on existing chunk tickets.
+
+Build 1.4.5-6.4.1.409
+	LexManos: Fix issue where non-BlockContainer TEs would not be removed properly.
+
+Build 1.4.5-6.4.1.408
+	LexManos: Fix logic issue in ForgeChunkManager.ticketCountAvaliableFor(username) PR
+	LexManos: Fix issue where worlds were potentially unloaded improperly on server shutdown.
+
+Build 1.4.5-6.4.1.407
+	LexManos: Small change to fix loading configs.
+
+Build 1.4.5-6.4.1.406
+	LexManos: Added section of the EntityData NBT that will be persisted for players across respawning.
+
+Build 1.4.5-6.4.1.405
+	LexManos: Exposed some ChunkLoader information for PR #278
+	LexManos: Fix potential NPE in EntityJoin handler and print warning.
+
+Build 1.4.5-6.4.1.404
+	LexManos: Small tweak to config to use Treemap
+
+Build 1.4.5-6.4.1.403
+	xcompwiz
+		Adds a more intelligent chunk constructor
+		Adds a chunk constructor with full block id range, that's metadata
+		sensitive, has intelligent coord ordering, and which allows for
+		generation at greater heights than 127.
+	xcompwiz: Fixes some weird formatting
+	zach
+		Fixes ordering for z & x loops (proper array increment order)
+		The ordering before would skip about in the ids and metadata arrays.  This runs linearly and should improve performance.
+		Done live on github
+
+Build 1.4.5-6.4.1.402
+	LexManos: Fixed AIOOB issue with new sanity check in getBlock
+
+Build 1.4.5-6.4.1.401
+	LexManos: Fix potential NPE in saving a property that didn't define a type.
+
+Build 1.4.5-6.4.1.400
+	LexManos
+		Added new functions to the Config class to allow for specification of comments when getting properties.
+		Added new getTerrainBlock whihc will limit the resuling ID to < 256, useful for world gen.
+		Calls to getBlock with IDs less then 256 will be assigned values above 256 {Thus freeing up terrain gen slots}
+		Made ConfigCategory implement Map<String, Propertery> should fix compatibility with most mods that broke two builds ago.
+
+Build 1.4.5-6.4.0.399
+	xhamolk.class11
+		OreDictionary addition: getOreID(ItemStack)
+		Allow getting the oreID from a ItemStack, as an alternative from getOreID(String).
+		Now is easier to exchange items for their equivalencies through the OreDictionary.
+
+Build 1.4.5-6.4.0.398
+	LexManos: New nested configuration category support, for PR #258
+
+Build 1.4.5-6.4.0.397
+	LexManos: Fixed issue with abandoned chunks.
+	LexManos: Fixed random chest items not generating to there max stack sizes.

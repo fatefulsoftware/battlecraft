@@ -1,5 +1,9 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 class GuiFlatPresetsItem
 {
     /** ID for the item used as icon for this preset. */

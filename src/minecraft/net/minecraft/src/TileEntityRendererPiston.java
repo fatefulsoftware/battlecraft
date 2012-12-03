@@ -1,8 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.ForgeHooksClient;
+
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class TileEntityRendererPiston extends TileEntitySpecialRenderer
 {
     /** instance of RenderBlocks used to draw the piston base and extension. */
@@ -30,6 +35,7 @@ public class TileEntityRendererPiston extends TileEntitySpecialRenderer
                 GL11.glShadeModel(GL11.GL_FLAT);
             }
 
+            ForgeHooksClient.beforeBlockRender(var9, blockRenderer);
             var10.startDrawingQuads();
             var10.setTranslation((double)((float)par2 - (float)par1TileEntityPiston.xCoord + par1TileEntityPiston.getOffsetX(par8)), (double)((float)par4 - (float)par1TileEntityPiston.yCoord + par1TileEntityPiston.getOffsetY(par8)), (double)((float)par6 - (float)par1TileEntityPiston.zCoord + par1TileEntityPiston.getOffsetZ(par8)));
             var10.setColorOpaque(1, 1, 1);
@@ -53,6 +59,7 @@ public class TileEntityRendererPiston extends TileEntitySpecialRenderer
 
             var10.setTranslation(0.0D, 0.0D, 0.0D);
             var10.draw();
+            ForgeHooksClient.afterBlockRender(var9, blockRenderer);
             RenderHelper.enableStandardItemLighting();
         }
     }

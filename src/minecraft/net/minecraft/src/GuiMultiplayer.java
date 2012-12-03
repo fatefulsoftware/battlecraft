@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import org.lwjgl.input.Keyboard;
 
+@SideOnly(Side.CLIENT)
 public class GuiMultiplayer extends GuiScreen
 {
     /** Number of outstanding ThreadPollServers threads */
@@ -406,13 +409,13 @@ public class GuiMultiplayer extends GuiScreen
             {
                 var26 = var5.substring(1).split("\u0000");
 
-                if (MathHelper.func_82715_a(var26[0], 0) == 1)
+                if (MathHelper.parseIntWithDefault(var26[0], 0) == 1)
                 {
                     par1ServerData.serverMOTD = var26[3];
-                    par1ServerData.field_82821_f = MathHelper.func_82715_a(var26[1], par1ServerData.field_82821_f);
+                    par1ServerData.field_82821_f = MathHelper.parseIntWithDefault(var26[1], par1ServerData.field_82821_f);
                     par1ServerData.gameVersion = var26[2];
-                    var8 = MathHelper.func_82715_a(var26[4], 0);
-                    var9 = MathHelper.func_82715_a(var26[5], 0);
+                    var8 = MathHelper.parseIntWithDefault(var26[4], 0);
+                    var9 = MathHelper.parseIntWithDefault(var26[5], 0);
 
                     if (var8 >= 0 && var9 >= 0)
                     {

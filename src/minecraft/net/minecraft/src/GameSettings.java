@@ -1,5 +1,8 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
+@SideOnly(Side.CLIENT)
 public class GameSettings
 {
     private static final String[] RENDER_DISTANCES = new String[] {"options.renderDistance.far", "options.renderDistance.normal", "options.renderDistance.short", "options.renderDistance.tiny"};
@@ -63,7 +67,7 @@ public class GameSettings
 
     /** Whether to show your cape */
     public boolean showCape = true;
-    public boolean touchscreen = false;
+    public boolean field_85185_A = false;
     public KeyBinding keyBindForward = new KeyBinding("key.forward", 17);
     public KeyBinding keyBindLeft = new KeyBinding("key.left", 30);
     public KeyBinding keyBindBack = new KeyBinding("key.back", 31);
@@ -337,7 +341,7 @@ public class GameSettings
 
         if (par1EnumOptions == EnumOptions.TOUCHSCREEN)
         {
-            this.touchscreen = !this.touchscreen;
+            this.field_85185_A = !this.field_85185_A;
         }
 
         if (par1EnumOptions == EnumOptions.USE_FULLSCREEN)
@@ -370,49 +374,34 @@ public class GameSettings
         {
             case 1:
                 return this.invertMouse;
-
             case 2:
                 return this.viewBobbing;
-
             case 3:
                 return this.anaglyph;
-
             case 4:
                 return this.advancedOpengl;
-
             case 5:
                 return this.ambientOcclusion;
-
             case 6:
                 return this.clouds;
-
             case 7:
                 return this.chatColours;
-
             case 8:
                 return this.chatLinks;
-
             case 9:
                 return this.chatLinksPrompt;
-
             case 10:
                 return this.serverTextures;
-
             case 11:
                 return this.snooperEnabled;
-
             case 12:
                 return this.fullScreen;
-
             case 13:
                 return this.enableVsync;
-
             case 14:
                 return this.showCape;
-
             case 15:
-                return this.touchscreen;
-
+                return this.field_85185_A;
             default:
                 return false;
         }
@@ -645,7 +634,7 @@ public class GameSettings
 
                     if (var3[0].equals("touchscreen"))
                     {
-                        this.touchscreen = var3[1].equals("true");
+                        this.field_85185_A = var3[1].equals("true");
                     }
 
                     for (int var4 = 0; var4 < this.keyBindings.length; ++var4)
@@ -685,6 +674,7 @@ public class GameSettings
      */
     public void saveOptions()
     {
+        if (FMLClientHandler.instance().isLoading()) return;
         try
         {
             PrintWriter var1 = new PrintWriter(new FileWriter(this.optionsFile));
@@ -721,7 +711,7 @@ public class GameSettings
             var1.println("advancedItemTooltips:" + this.advancedItemTooltips);
             var1.println("pauseOnLostFocus:" + this.pauseOnLostFocus);
             var1.println("showCape:" + this.showCape);
-            var1.println("touchscreen:" + this.touchscreen);
+            var1.println("touchscreen:" + this.field_85185_A);
 
             for (int var2 = 0; var2 < this.keyBindings.length; ++var2)
             {

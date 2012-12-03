@@ -1,7 +1,10 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.concurrent.Callable;
 
+@SideOnly(Side.CLIENT)
 class CallableLastTickedParticle implements Callable
 {
     final EntityFX field_90041_a;

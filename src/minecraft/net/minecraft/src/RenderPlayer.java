@@ -1,14 +1,25 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.client.Minecraft;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.ForgeHooksClient;
+
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class RenderPlayer extends RenderLiving
 {
     private ModelBiped modelBipedMain;
     private ModelBiped modelArmorChestplate;
     private ModelBiped modelArmor;
-    private static final String[] armorFilenamePrefix = new String[] {"cloth", "chain", "iron", "diamond", "gold"};
+    public static String[] armorFilenamePrefix = new String[] {"cloth", "chain", "iron", "diamond", "gold"};
+    public static float NAME_TAG_RANGE = 64.0f;
+    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
 
     public RenderPlayer()
     {
@@ -32,7 +43,7 @@ public class RenderPlayer extends RenderLiving
             if (var5 instanceof ItemArmor)
             {
                 ItemArmor var6 = (ItemArmor)var5;
-                this.loadTexture("/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
+                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
                 ModelBiped var7 = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                 var7.bipedHead.showModel = par2 == 0;
                 var7.bipedHeadwear.showModel = par2 == 0;
@@ -101,7 +112,7 @@ public class RenderPlayer extends RenderLiving
             if (var5 instanceof ItemArmor)
             {
                 ItemArmor var6 = (ItemArmor)var5;
-                this.loadTexture("/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png");
+                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png"));
                 float var7 = 1.0F;
                 GL11.glColor3f(var7, var7, var7);
             }
@@ -153,7 +164,7 @@ public class RenderPlayer extends RenderLiving
             float var8 = 1.6F;
             float var9 = 0.016666668F * var8;
             double var10 = par1EntityPlayer.getDistanceSqToEntity(this.renderManager.livingPlayer);
-            float var12 = par1EntityPlayer.isSneaking() ? 32.0F : 64.0F;
+            float var12 = par1EntityPlayer.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
 
             if (var10 < (double)(var12 * var12))
             {
@@ -211,7 +222,7 @@ public class RenderPlayer extends RenderLiving
         float var3 = 1.0F;
         GL11.glColor3f(var3, var3, var3);
         super.renderEquippedItems(par1EntityPlayer, par2);
-        super.renderArrowsStuckInEntity(par1EntityPlayer, par2);
+        super.func_85093_e(par1EntityPlayer, par2);
         ItemStack var4 = par1EntityPlayer.inventory.armorItemInSlot(3);
 
         if (var4 != null)
@@ -220,9 +231,12 @@ public class RenderPlayer extends RenderLiving
             this.modelBipedMain.bipedHead.postRender(0.0625F);
             float var5;
 
-            if (var4.getItem().shiftedIndex < 256)
+            if (var4 != null && var4.getItem() instanceof ItemBlock)
             {
-                if (RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType()))
+                IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var4, EQUIPPED);
+                boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var4, BLOCK_3D));
+
+                if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType()))
                 {
                     var5 = 0.625F;
                     GL11.glTranslatef(0.0F, -0.25F, 0.0F);
@@ -340,7 +354,10 @@ public class RenderPlayer extends RenderLiving
                 var23 = var21.getItemUseAction();
             }
 
-            if (var21.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var21.itemID].getRenderType()))
+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var21, EQUIPPED);
+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var21, BLOCK_3D));
+
+            if (var21.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var21.itemID].getRenderType())))
             {
                 var7 = 0.5F;
                 GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
@@ -397,7 +414,7 @@ public class RenderPlayer extends RenderLiving
 
             if (var21.getItem().requiresMultipleRenderPasses())
             {
-                for (var27 = 0; var27 <= 1; ++var27)
+                for (var27 = 0; var27 < var21.getItem().getRenderPasses(var21.getItemDamage()); ++var27)
                 {
                     int var26 = var21.getItem().getColorFromItemStack(var21, var27);
                     var28 = (float)(var26 >> 16 & 255) / 255.0F;

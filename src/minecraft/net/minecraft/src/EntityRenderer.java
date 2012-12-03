@@ -1,16 +1,24 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.MinecraftForge;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.GLU;
 
+@SideOnly(Side.CLIENT)
 public class EntityRenderer
 {
     public static boolean anaglyphEnable = false;
@@ -306,8 +314,15 @@ public class EntityRenderer
      */
     private void updateFovModifierHand()
     {
-        EntityPlayerSP var1 = (EntityPlayerSP)this.mc.renderViewEntity;
-        this.fovMultiplierTemp = var1.getFOVMultiplier();
+        if (mc.renderViewEntity instanceof EntityPlayerSP)
+        {
+            EntityPlayerSP var1 = (EntityPlayerSP)this.mc.renderViewEntity;
+            this.fovMultiplierTemp = var1.getFOVMultiplier();
+        }
+        else
+        {
+            this.fovMultiplierTemp = mc.thePlayer.getFOVMultiplier();
+        }
         this.fovModifierHandPrev = this.fovModifierHand;
         this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
     }
@@ -323,7 +338,7 @@ public class EntityRenderer
         }
         else
         {
-            EntityPlayer var3 = (EntityPlayer)this.mc.renderViewEntity;
+            EntityLiving var3 = (EntityLiving)this.mc.renderViewEntity;
             float var4 = 70.0F;
 
             if (par2)
@@ -410,15 +425,7 @@ public class EntityRenderer
 
             if (!this.mc.gameSettings.debugCamEnable)
             {
-                int var10 = this.mc.theWorld.getBlockId(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
-
-                if (var10 == Block.bed.blockID)
-                {
-                    int var11 = this.mc.theWorld.getBlockMetadata(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
-                    int var12 = var11 & 3;
-                    GL11.glRotatef((float)(var12 * 90), 0.0F, 1.0F, 0.0F);
-                }
-
+                ForgeHooksClient.orientBedCamera(mc, var2);
                 GL11.glRotatef(var2.prevRotationYaw + (var2.rotationYaw - var2.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                 GL11.glRotatef(var2.prevRotationPitch + (var2.rotationPitch - var2.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
             }
@@ -499,7 +506,7 @@ public class EntityRenderer
         var4 = var2.prevPosX + (var2.posX - var2.prevPosX) * (double)par1;
         var6 = var2.prevPosY + (var2.posY - var2.prevPosY) * (double)par1 - (double)var3;
         var8 = var2.prevPosZ + (var2.posZ - var2.prevPosZ) * (double)par1;
-        this.cloudFog = this.mc.renderGlobal.hasCloudFog(var4, var6, var8, par1);
+        this.cloudFog = this.mc.renderGlobal.func_72721_a(var4, var6, var8, par1);
     }
 
     /**
@@ -762,7 +769,7 @@ public class EntityRenderer
 
                 if (this.mc.thePlayer.isPotionActive(Potion.nightVision))
                 {
-                    var16 = this.getNightVisionBrightness(this.mc.thePlayer, par1);
+                    var16 = this.func_82830_a(this.mc.thePlayer, par1);
                     var17 = 1.0F / var13;
 
                     if (var17 > 1.0F / var14)
@@ -850,10 +857,7 @@ public class EntityRenderer
         }
     }
 
-    /**
-     * Gets the night vision brightness
-     */
-    private float getNightVisionBrightness(EntityPlayer par1EntityPlayer, float par2)
+    private float func_82830_a(EntityPlayer par1EntityPlayer, float par2)
     {
         int var3 = par1EntityPlayer.getActivePotionEffect(Potion.nightVision).getDuration();
         return var3 > 200 ? 1.0F : 0.7F + MathHelper.sin(((float)var3 - par2) * (float)Math.PI * 0.2F) * 0.3F;
@@ -874,7 +878,7 @@ public class EntityRenderer
         this.mc.mcProfiler.endSection();
         boolean var2 = Display.isActive();
 
-        if (!var2 && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.touchscreen || !Mouse.isButtonDown(1)))
+        if (!var2 && this.mc.gameSettings.pauseOnLostFocus && (!this.mc.gameSettings.field_85185_A || !Mouse.isButtonDown(1)))
         {
             if (Minecraft.getSystemTime() - this.prevFrameTime > 500L)
             {
@@ -928,7 +932,7 @@ public class EntityRenderer
             int var15 = var13.getScaledHeight();
             int var16 = Mouse.getX() * var14 / this.mc.displayWidth;
             int var17 = var15 - Mouse.getY() * var15 / this.mc.displayHeight - 1;
-            int var18 = performanceToFps(this.mc.gameSettings.limitFramerate);
+            int var18 = func_78465_a(this.mc.gameSettings.limitFramerate);
 
             if (this.mc.theWorld != null)
             {
@@ -974,8 +978,8 @@ public class EntityRenderer
                 }
                 catch (Throwable var12)
                 {
-                    CrashReport var10 = CrashReport.makeCrashReport(var12, "Rendering screen");
-                    CrashReportCategory var11 = var10.makeCategory("Screen render details");
+                    CrashReport var10 = CrashReport.func_85055_a(var12, "Rendering screen");
+                    CrashReportCategory var11 = var10.func_85058_a("Screen render details");
                     var11.addCrashSectionCallable("Screen name", new CallableScreenName(this));
                     var11.addCrashSectionCallable("Mouse location", new CallableMouseLocation(this, var16, var17));
                     var11.addCrashSectionCallable("Screen size", new CallableScreenSize(this, var13));
@@ -1112,8 +1116,11 @@ public class EntityRenderer
                     var17 = (EntityPlayer)var4;
                     GL11.glDisable(GL11.GL_ALPHA_TEST);
                     this.mc.mcProfiler.endStartSection("outline");
-                    var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
-                    var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+                    if (!ForgeHooksClient.onDrawBlockHighlight(var5, var17, mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1))
+                    {
+                        var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+                        var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+                    }
                     GL11.glEnable(GL11.GL_ALPHA_TEST);
                 }
             }
@@ -1177,15 +1184,18 @@ public class EntityRenderer
                 var17 = (EntityPlayer)var4;
                 GL11.glDisable(GL11.GL_ALPHA_TEST);
                 this.mc.mcProfiler.endStartSection("outline");
-                var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
-                var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+                if (!ForgeHooksClient.onDrawBlockHighlight(var5, var17, mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1))
+                {
+                    var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+                    var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+                }
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
             }
 
             this.mc.mcProfiler.endStartSection("destroyProgress");
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-            var5.drawBlockDamageTexture(Tessellator.instance, (EntityPlayer)var4, par1);
+            var5.drawBlockDamageTexture(Tessellator.instance, var4, par1);
             GL11.glDisable(GL11.GL_BLEND);
             this.mc.mcProfiler.endStartSection("weather");
             this.renderRainSnow(par1);
@@ -1195,6 +1205,9 @@ public class EntityRenderer
             {
                 this.func_82829_a(var5, par1);
             }
+
+            this.mc.mcProfiler.endStartSection("FRenderLast");
+            ForgeHooksClient.dispatchRenderLast(var5, par1);
 
             this.mc.mcProfiler.endStartSection("hand");
 
@@ -1646,7 +1659,7 @@ public class EntityRenderer
 
         if (var3.isPotionActive(Potion.nightVision))
         {
-            var23 = this.getNightVisionBrightness(this.mc.thePlayer, par1);
+            var23 = this.func_82830_a(this.mc.thePlayer, par1);
             var17 = 1.0F / this.fogColorRed;
 
             if (var17 > 1.0F / this.fogColorGreen)
@@ -1875,10 +1888,7 @@ public class EntityRenderer
         return this.fogColorBuffer;
     }
 
-    /**
-     * Converts performance value (0-2) to FPS (35-200)
-     */
-    public static int performanceToFps(int par0)
+    public static int func_78465_a(int par0)
     {
         short var1 = 200;
 
@@ -1895,10 +1905,7 @@ public class EntityRenderer
         return var1;
     }
 
-    /**
-     * Get minecraft reference from the EntityRenderer
-     */
-    static Minecraft getRendererMinecraft(EntityRenderer par0EntityRenderer)
+    static Minecraft func_90030_a(EntityRenderer par0EntityRenderer)
     {
         return par0EntityRenderer.mc;
     }

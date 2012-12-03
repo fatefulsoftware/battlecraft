@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.concurrent.Callable;
 import net.minecraft.client.Minecraft;
 
+@SideOnly(Side.CLIENT)
 public class CallableClientProfiler implements Callable
 {
     final Minecraft field_90046_a;

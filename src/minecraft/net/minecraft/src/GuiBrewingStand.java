@@ -1,7 +1,10 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class GuiBrewingStand extends GuiContainer
 {
     private TileEntityBrewingStand brewingStand;
@@ -50,27 +53,21 @@ public class GuiBrewingStand extends GuiContainer
                 case 0:
                     var8 = 29;
                     break;
-
                 case 1:
                     var8 = 24;
                     break;
-
                 case 2:
                     var8 = 20;
                     break;
-
                 case 3:
                     var8 = 16;
                     break;
-
                 case 4:
                     var8 = 11;
                     break;
-
                 case 5:
                     var8 = 6;
                     break;
-
                 case 6:
                     var8 = 0;
             }

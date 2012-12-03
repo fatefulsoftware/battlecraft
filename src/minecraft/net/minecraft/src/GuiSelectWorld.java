@@ -1,10 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class GuiSelectWorld extends GuiScreen
 {
     /** simple date formater */
@@ -200,7 +203,7 @@ public class GuiSelectWorld extends GuiScreen
                 var3 = "World" + par1;
             }
 
-            if (this.mc.getSaveLoader().canLoadWorld(var2))
+            if (this.mc.getSaveLoader().func_90033_f(var2))
             {
                 this.mc.launchIntegratedServer(var2, var3, (WorldSettings)null);
             }

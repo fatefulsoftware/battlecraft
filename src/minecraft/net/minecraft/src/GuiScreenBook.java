@@ -1,10 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class GuiScreenBook extends GuiScreen
 {
     /** The player editing the book */
@@ -270,7 +273,6 @@ public class GuiScreenBook extends GuiScreen
             case 22:
                 this.func_74160_b(GuiScreen.getClipboardString());
                 return;
-
             default:
                 switch (par2)
                 {
@@ -283,11 +285,9 @@ public class GuiScreenBook extends GuiScreen
                         }
 
                         return;
-
                     case 28:
                         this.func_74160_b("\n");
                         return;
-
                     default:
                         if (ChatAllowedCharacters.isAllowedCharacter(par1))
                         {
@@ -309,7 +309,6 @@ public class GuiScreenBook extends GuiScreen
                 }
 
                 return;
-
             case 28:
                 if (this.bookTitle.length() > 0)
                 {
@@ -318,7 +317,6 @@ public class GuiScreenBook extends GuiScreen
                 }
 
                 return;
-
             default:
                 if (this.bookTitle.length() < 16 && ChatAllowedCharacters.isAllowedCharacter(par1))
                 {

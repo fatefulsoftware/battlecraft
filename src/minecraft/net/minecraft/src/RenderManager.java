@@ -1,14 +1,17 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class RenderManager
 {
     /** A map of entity classes and the associated renderer. */
-    private Map entityRenderMap = new HashMap();
+    public Map entityRenderMap = new HashMap();
 
     /** The static instance of RenderManager. */
     public static RenderManager instance = new RenderManager();
@@ -89,7 +92,6 @@ public class RenderManager
         this.entityRenderMap.put(EntityBoat.class, new RenderBoat());
         this.entityRenderMap.put(EntityFishHook.class, new RenderFish());
         this.entityRenderMap.put(EntityLightningBolt.class, new RenderLightningBolt());
-        ModLoader.addAllRenderers(this.entityRenderMap);
         Iterator var1 = this.entityRenderMap.values().iterator();
 
         while (var1.hasNext())
@@ -131,12 +133,14 @@ public class RenderManager
 
         if (par4EntityLiving.isPlayerSleeping())
         {
-            int var7 = par1World.getBlockId(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+            int x = MathHelper.floor_double(par4EntityLiving.posX);
+            int y = MathHelper.floor_double(par4EntityLiving.posY);
+            int z = MathHelper.floor_double(par4EntityLiving.posZ);
+            Block block = Block.blocksList[par1World.getBlockId(x, y, z)];
 
-            if (var7 == Block.bed.blockID)
+            if (block != null && block.isBed(par1World, x, y, z, par4EntityLiving))
             {
-                int var8 = par1World.getBlockMetadata(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
-                int var9 = var8 & 3;
+                int var9 = block.getBedDirection(par1World, x, y, z);;
                 this.playerViewY = (float)(var9 * 90 + 180);
                 this.playerViewX = 0.0F;
             }
@@ -209,7 +213,7 @@ public class RenderManager
                     }
                     catch (Throwable var17)
                     {
-                        throw new ReportedException(CrashReport.makeCrashReport(var17, "Rendering entity hitbox in world"));
+                        throw new ReportedException(CrashReport.func_85055_a(var17, "Rendering entity hitbox in world"));
                     }
                 }
 
@@ -219,7 +223,7 @@ public class RenderManager
                 }
                 catch (Throwable var16)
                 {
-                    throw new ReportedException(CrashReport.makeCrashReport(var16, "Rendering entity in world"));
+                    throw new ReportedException(CrashReport.func_85055_a(var16, "Rendering entity in world"));
                 }
 
                 try
@@ -228,16 +232,16 @@ public class RenderManager
                 }
                 catch (Throwable var15)
                 {
-                    throw new ReportedException(CrashReport.makeCrashReport(var15, "Post-rendering entity in world"));
+                    throw new ReportedException(CrashReport.func_85055_a(var15, "Post-rendering entity in world"));
                 }
             }
         }
         catch (Throwable var18)
         {
-            CrashReport var12 = CrashReport.makeCrashReport(var18, "Rendering entity in world");
-            CrashReportCategory var13 = var12.makeCategory("Entity being rendered");
+            CrashReport var12 = CrashReport.func_85055_a(var18, "Rendering entity in world");
+            CrashReportCategory var13 = var12.func_85058_a("Entity being rendered");
             par1Entity.func_85029_a(var13);
-            CrashReportCategory var14 = var12.makeCategory("Renderer details");
+            CrashReportCategory var14 = var12.func_85058_a("Renderer details");
             var14.addCrashSection("Assigned renderer", var10);
             var14.addCrashSection("Location", CrashReportCategory.func_85074_a(par2, par4, par6));
             var14.addCrashSection("Rotation", Float.valueOf(par8));

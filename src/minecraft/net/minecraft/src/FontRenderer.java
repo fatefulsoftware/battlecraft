@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +13,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class FontRenderer
 {
     /** Array of width of all the characters in default.png */
@@ -315,7 +318,7 @@ public class FontRenderer
      */
     public int drawStringWithShadow(String par1Str, int par2, int par3, int par4)
     {
-        return this.drawString(par1Str, par2, par3, par4, true);
+        return this.func_85187_a(par1Str, par2, par3, par4, true);
     }
 
     /**
@@ -323,13 +326,10 @@ public class FontRenderer
      */
     public int drawString(String par1Str, int par2, int par3, int par4)
     {
-        return this.drawString(par1Str, par2, par3, par4, false);
+        return this.func_85187_a(par1Str, par2, par3, par4, false);
     }
 
-    /**
-     * Draws the specified string. Args: string, x, y, color, dropShadow
-     */
-    public int drawString(String par1Str, int par2, int par3, int par4, boolean par5)
+    public int func_85187_a(String par1Str, int par2, int par3, int par4, boolean par5)
     {
         this.resetStyles();
 
@@ -911,7 +911,6 @@ public class FontRenderer
                 case 10:
                     --var5;
                     break;
-
                 case 167:
                     if (var5 < var3 - 1)
                     {
@@ -932,10 +931,8 @@ public class FontRenderer
                     }
 
                     break;
-
                 case 32:
                     var6 = var5;
-
                 default:
                     var4 += this.getCharWidth(var8);
 

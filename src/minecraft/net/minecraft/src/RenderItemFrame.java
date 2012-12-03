@@ -1,10 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class RenderItemFrame extends Render
 {
-    private final RenderBlocks renderBlocksInstance = new RenderBlocks();
+    private final RenderBlocks field_82405_a = new RenderBlocks();
 
     public void func_82404_a(EntityItemFrame par1EntityItemFrame, double par2, double par4, double par6, float par8, float par9)
     {
@@ -34,31 +37,31 @@ public class RenderItemFrame extends Render
         float var4 = 0.75F;
         float var5 = var4 / 2.0F;
         GL11.glPushMatrix();
-        this.renderBlocksInstance.setCustomBlockBounds(0.0D, (double)(0.5F - var5 + 0.0625F), (double)(0.5F - var5 + 0.0625F), (double)(var3 * 0.5F), (double)(0.5F + var5 - 0.0625F), (double)(0.5F + var5 - 0.0625F));
-        this.renderBlocksInstance.setOverrideBlockTexture(185);
-        this.renderBlocksInstance.renderBlockAsItem(var2, 0, 1.0F);
-        this.renderBlocksInstance.clearOverrideBlockTexture();
-        this.renderBlocksInstance.resetCustomBlockBounds();
+        this.field_82405_a.func_83019_b(0.0D, (double)(0.5F - var5 + 0.0625F), (double)(0.5F - var5 + 0.0625F), (double)(var3 * 0.5F), (double)(0.5F + var5 - 0.0625F), (double)(0.5F + var5 - 0.0625F));
+        this.field_82405_a.func_82774_a(185);
+        this.field_82405_a.renderBlockAsItem(var2, 0, 1.0F);
+        this.field_82405_a.clearOverrideBlockTexture();
+        this.field_82405_a.func_83017_b();
         GL11.glPopMatrix();
-        this.renderBlocksInstance.setOverrideBlockTexture(214);
+        this.field_82405_a.func_82774_a(214);
         GL11.glPushMatrix();
-        this.renderBlocksInstance.setCustomBlockBounds(0.0D, (double)(0.5F - var5), (double)(0.5F - var5), (double)(var3 + 1.0E-4F), (double)(var3 + 0.5F - var5), (double)(0.5F + var5));
-        this.renderBlocksInstance.renderBlockAsItem(var2, 0, 1.0F);
-        GL11.glPopMatrix();
-        GL11.glPushMatrix();
-        this.renderBlocksInstance.setCustomBlockBounds(0.0D, (double)(0.5F + var5 - var3), (double)(0.5F - var5), (double)(var3 + 1.0E-4F), (double)(0.5F + var5), (double)(0.5F + var5));
-        this.renderBlocksInstance.renderBlockAsItem(var2, 0, 1.0F);
+        this.field_82405_a.func_83019_b(0.0D, (double)(0.5F - var5), (double)(0.5F - var5), (double)(var3 + 1.0E-4F), (double)(var3 + 0.5F - var5), (double)(0.5F + var5));
+        this.field_82405_a.renderBlockAsItem(var2, 0, 1.0F);
         GL11.glPopMatrix();
         GL11.glPushMatrix();
-        this.renderBlocksInstance.setCustomBlockBounds(0.0D, (double)(0.5F - var5), (double)(0.5F - var5), (double)var3, (double)(0.5F + var5), (double)(var3 + 0.5F - var5));
-        this.renderBlocksInstance.renderBlockAsItem(var2, 0, 1.0F);
+        this.field_82405_a.func_83019_b(0.0D, (double)(0.5F + var5 - var3), (double)(0.5F - var5), (double)(var3 + 1.0E-4F), (double)(0.5F + var5), (double)(0.5F + var5));
+        this.field_82405_a.renderBlockAsItem(var2, 0, 1.0F);
         GL11.glPopMatrix();
         GL11.glPushMatrix();
-        this.renderBlocksInstance.setCustomBlockBounds(0.0D, (double)(0.5F - var5), (double)(0.5F + var5 - var3), (double)var3, (double)(0.5F + var5), (double)(0.5F + var5));
-        this.renderBlocksInstance.renderBlockAsItem(var2, 0, 1.0F);
+        this.field_82405_a.func_83019_b(0.0D, (double)(0.5F - var5), (double)(0.5F - var5), (double)var3, (double)(0.5F + var5), (double)(var3 + 0.5F - var5));
+        this.field_82405_a.renderBlockAsItem(var2, 0, 1.0F);
         GL11.glPopMatrix();
-        this.renderBlocksInstance.resetCustomBlockBounds();
-        this.renderBlocksInstance.clearOverrideBlockTexture();
+        GL11.glPushMatrix();
+        this.field_82405_a.func_83019_b(0.0D, (double)(0.5F - var5), (double)(0.5F + var5 - var3), (double)var3, (double)(0.5F + var5), (double)(0.5F + var5));
+        this.field_82405_a.renderBlockAsItem(var2, 0, 1.0F);
+        GL11.glPopMatrix();
+        this.field_82405_a.func_83017_b();
+        this.field_82405_a.clearOverrideBlockTexture();
         GL11.glPopMatrix();
     }
 
@@ -81,11 +84,9 @@ public class RenderItemFrame extends Render
                 case 1:
                     GL11.glTranslatef(-0.16F, -0.16F, 0.0F);
                     break;
-
                 case 2:
                     GL11.glTranslatef(0.0F, -0.32F, 0.0F);
                     break;
-
                 case 3:
                     GL11.glTranslatef(0.16F, -0.16F, 0.0F);
             }
@@ -124,7 +125,7 @@ public class RenderItemFrame extends Render
                     TextureCompassFX.func_82390_a(par1EntityItemFrame.posX, par1EntityItemFrame.posZ, (double)MathHelper.wrapAngleTo180_float((float)(180 + par1EntityItemFrame.hangingDirection * 90)), false, true);
                     TextureCompassFX.field_82391_c.field_76868_i = var8;
                     TextureCompassFX.field_82391_c.field_76866_j = var10;
-                    this.renderManager.renderEngine.updateDynamicTexture(TextureCompassFX.field_82391_c, -1);
+                    this.renderManager.renderEngine.func_82772_a(TextureCompassFX.field_82391_c, -1);
                 }
 
                 float var9 = this.renderManager.playerViewY;
@@ -138,7 +139,7 @@ public class RenderItemFrame extends Render
                 if (var3.item.getItem() == Item.compass)
                 {
                     TextureCompassFX.field_82391_c.onTick();
-                    this.renderManager.renderEngine.updateDynamicTexture(TextureCompassFX.field_82391_c, -1);
+                    this.renderManager.renderEngine.func_82772_a(TextureCompassFX.field_82391_c, -1);
                 }
             }
 

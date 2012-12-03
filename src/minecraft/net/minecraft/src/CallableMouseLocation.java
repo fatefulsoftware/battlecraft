@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.concurrent.Callable;
 import org.lwjgl.input.Mouse;
 
+@SideOnly(Side.CLIENT)
 class CallableMouseLocation implements Callable
 {
     final int field_90026_a;

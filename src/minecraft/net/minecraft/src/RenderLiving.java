@@ -1,10 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+@SideOnly(Side.CLIENT)
 public class RenderLiving extends Render
 {
     protected ModelBase mainModel;
@@ -293,12 +296,9 @@ public class RenderLiving extends Render
 
     protected void renderEquippedItems(EntityLiving par1EntityLiving, float par2) {}
 
-    /**
-     * renders arrows the Entity has been attacked with, attached to it
-     */
-    protected void renderArrowsStuckInEntity(EntityLiving par1EntityLiving, float par2)
+    protected void func_85093_e(EntityLiving par1EntityLiving, float par2)
     {
-        int var3 = par1EntityLiving.getArrowCountInEntity();
+        int var3 = par1EntityLiving.func_85035_bI();
 
         if (var3 > 0)
         {

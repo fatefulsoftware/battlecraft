@@ -1,7 +1,10 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.concurrent.Callable;
 
+@SideOnly(Side.CLIENT)
 class CallableParticlePositionInfo implements Callable
 {
     final double field_85101_a;

@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.lwjgl.input.Keyboard;
 
+@SideOnly(Side.CLIENT)
 public class GuiFlatPresets extends GuiScreen
 {
     /** RenderItem instance used to render preset icons. */
@@ -127,7 +130,7 @@ public class GuiFlatPresets extends GuiScreen
     /**
      * Add a flat world preset with no world features.
      */
-    private static void addPresetNoFeatures(String par0Str, int par1, BiomeGenBase par2BiomeGenBase, FlatLayerInfo ... par3ArrayOfFlatLayerInfo)
+    public static void addPresetNoFeatures(String par0Str, int par1, BiomeGenBase par2BiomeGenBase, FlatLayerInfo ... par3ArrayOfFlatLayerInfo)
     {
         addPreset(par0Str, par1, par2BiomeGenBase, (List)null, par3ArrayOfFlatLayerInfo);
     }
@@ -135,7 +138,7 @@ public class GuiFlatPresets extends GuiScreen
     /**
      * Add a flat world preset.
      */
-    private static void addPreset(String par0Str, int par1, BiomeGenBase par2BiomeGenBase, List par3List, FlatLayerInfo ... par4ArrayOfFlatLayerInfo)
+    public static void addPreset(String par0Str, int par1, BiomeGenBase par2BiomeGenBase, List par3List, FlatLayerInfo ... par4ArrayOfFlatLayerInfo)
     {
         FlatGeneratorInfo var5 = new FlatGeneratorInfo();
 

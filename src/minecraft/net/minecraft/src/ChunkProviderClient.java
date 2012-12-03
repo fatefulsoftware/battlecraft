@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class ChunkProviderClient implements IChunkProvider
 {
     /**
@@ -137,5 +140,5 @@ public class ChunkProviderClient implements IChunkProvider
         return this.chunkListing.size();
     }
 
-    public void func_82695_e(int par1, int par2) {}
+    public void recreateStructures(int par1, int par2) {}
 }

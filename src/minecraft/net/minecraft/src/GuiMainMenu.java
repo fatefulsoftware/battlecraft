@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,11 +10,19 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import cpw.mods.fml.client.GuiModList;
+import cpw.mods.fml.common.FMLCommonHandler;
+
+@SideOnly(Side.CLIENT)
 public class GuiMainMenu extends GuiScreen
 {
     /** The RNG used by the Main Menu Screen. */
@@ -147,7 +157,8 @@ public class GuiMainMenu extends GuiScreen
             this.addSingleplayerMultiplayerButtons(var4, 24, var2);
         }
 
-        this.controlList.add(new GuiButton(3, this.width / 2 - 100, var4 + 48, var2.translateKey("menu.mods")));
+        this.controlList.add(new GuiButton(3, this.width / 2 - 100, var4 + 48, 98, 20, var2.translateKey("menu.mods")));
+        this.controlList.add(new GuiButton(6, this.width / 2 + 2, var4 + 48, 98, 20, "Mods"));
 
         if (this.mc.hideQuitButton)
         {
@@ -220,6 +231,11 @@ public class GuiMainMenu extends GuiScreen
         if (par1GuiButton.id == 4)
         {
             this.mc.shutdown();
+        }
+
+        if (par1GuiButton.id == 6)
+        {
+            this.mc.displayGuiScreen(new GuiModList(this));
         }
 
         if (par1GuiButton.id == 11)
@@ -450,7 +466,14 @@ public class GuiMainMenu extends GuiScreen
             var9 = var9 + " Demo";
         }
 
-        this.drawString(this.fontRenderer, var9, 2, this.height - 10, 16777215);
+        List<String> brandings=Lists.reverse(FMLCommonHandler.instance().getBrandings());
+        for (int i=0; i<brandings.size(); i++) {
+            String brd = brandings.get(i);
+            if (!Strings.isNullOrEmpty(brd))
+            {
+                this.drawString(this.fontRenderer, brd, 2, this.height - ( 10 + i * (this.fontRenderer.FONT_HEIGHT + 1)), 16777215);
+            }
+        }
         String var10 = "Copyright Mojang AB. Do not distribute!";
         this.drawString(this.fontRenderer, var10, this.width - this.fontRenderer.getStringWidth(var10) - 2, this.height - 10, 16777215);
         super.drawScreen(par1, par2, par3);

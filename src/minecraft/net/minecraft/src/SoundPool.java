@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+@SideOnly(Side.CLIENT)
 public class SoundPool
 {
     /** The RNG used by SoundPool. */
@@ -34,42 +37,57 @@ public class SoundPool
      */
     public SoundPoolEntry addSound(String par1Str, File par2File)
     {
-        try
+        try 
         {
-            return this.addSound(par1Str, par2File.toURI().toURL());
+            return addSound(par1Str, par2File.toURI().toURL());
         }
-        catch (MalformedURLException var4)
+        catch (MalformedURLException ex)
         {
-            var4.printStackTrace();
-            throw new RuntimeException(var4);
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
         }
     }
-
-    public SoundPoolEntry addSound(String var1, URL var2)
+    
+    /**
+     * URL version of addSound, as the back-end sound engine has full support for various types of URLs
+     * 
+     * @param par1Str The name of the sound to add
+     * @param url The url of the sound resource
+     * @return A SoundPoolEntry for the newly added sound
+     */
+    public SoundPoolEntry addSound(String par1Str, URL url)
     {
-        String var3 = var1;
-        var1 = var1.substring(0, var1.indexOf("."));
-
-        if (this.isGetRandomSound)
+        try
         {
-            while (Character.isDigit(var1.charAt(var1.length() - 1)))
+            String var3 = par1Str;
+            par1Str = par1Str.substring(0, par1Str.indexOf("."));
+
+            if (this.isGetRandomSound)
             {
-                var1 = var1.substring(0, var1.length() - 1);
+                while (Character.isDigit(par1Str.charAt(par1Str.length() - 1)))
+                {
+                    par1Str = par1Str.substring(0, par1Str.length() - 1);
+                }
             }
+
+            par1Str = par1Str.replaceAll("/", ".");
+
+            if (!this.nameToSoundPoolEntriesMapping.containsKey(par1Str))
+            {
+                this.nameToSoundPoolEntriesMapping.put(par1Str, new ArrayList());
+            }
+
+            SoundPoolEntry var4 = new SoundPoolEntry(var3, url);
+            ((List)this.nameToSoundPoolEntriesMapping.get(par1Str)).add(var4);
+            this.allSoundPoolEntries.add(var4);
+            ++this.numberOfSoundPoolEntries;
+            return var4;
         }
-
-        var1 = var1.replaceAll("/", ".");
-
-        if (!this.nameToSoundPoolEntriesMapping.containsKey(var1))
+        catch (Exception var5)
         {
-            this.nameToSoundPoolEntriesMapping.put(var1, new ArrayList());
+            var5.printStackTrace();
+            throw new RuntimeException(var5);
         }
-
-        SoundPoolEntry var4 = new SoundPoolEntry(var3, var2);
-        ((List)this.nameToSoundPoolEntriesMapping.get(var1)).add(var4);
-        this.allSoundPoolEntries.add(var4);
-        ++this.numberOfSoundPoolEntries;
-        return var4;
     }
 
     /**

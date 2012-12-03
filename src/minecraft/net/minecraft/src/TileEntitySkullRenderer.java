@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+@SideOnly(Side.CLIENT)
 public class TileEntitySkullRenderer extends TileEntitySpecialRenderer
 {
     public static TileEntitySkullRenderer skullRenderer;
@@ -36,22 +39,19 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer
             default:
                 this.bindTextureByName("/mob/skeleton.png");
                 break;
-
             case 1:
                 this.bindTextureByName("/mob/skeleton_wither.png");
                 break;
-
             case 2:
                 this.bindTextureByName("/mob/zombie.png");
                 var8 = this.field_82395_d;
                 break;
-
             case 3:
                 if (par7Str != null && par7Str.length() > 0)
                 {
                     String var9 = "http://skins.minecraft.net/MinecraftSkins/" + StringUtils.stripControlCodes(par7Str) + ".png";
 
-                    if (!skullRenderer.tileEntityRenderer.renderEngine.hasImageData(var9))
+                    if (!skullRenderer.tileEntityRenderer.renderEngine.func_82773_c(var9))
                     {
                         skullRenderer.tileEntityRenderer.renderEngine.obtainImageData(var9, new ImageBufferDownload());
                     }
@@ -64,7 +64,6 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer
                 }
 
                 break;
-
             case 4:
                 this.bindTextureByName("/mob/creeper.png");
         }
@@ -79,17 +78,14 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer
                 case 2:
                     GL11.glTranslatef(par1 + 0.5F, par2 + 0.25F, par3 + 0.74F);
                     break;
-
                 case 3:
                     GL11.glTranslatef(par1 + 0.5F, par2 + 0.25F, par3 + 0.26F);
                     par5 = 180.0F;
                     break;
-
                 case 4:
                     GL11.glTranslatef(par1 + 0.74F, par2 + 0.25F, par3 + 0.5F);
                     par5 = 270.0F;
                     break;
-
                 case 5:
                 default:
                     GL11.glTranslatef(par1 + 0.26F, par2 + 0.25F, par3 + 0.5F);

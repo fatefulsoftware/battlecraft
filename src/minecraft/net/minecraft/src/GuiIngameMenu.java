@@ -1,5 +1,9 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class GuiIngameMenu extends GuiScreen
 {
     /** Also counts the number of updates, not certain as to why yet. */
@@ -42,33 +46,27 @@ public class GuiIngameMenu extends GuiScreen
             case 0:
                 this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
                 break;
-
             case 1:
                 par1GuiButton.enabled = false;
                 this.mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
                 this.mc.theWorld.sendQuittingDisconnectingPacket();
                 this.mc.loadWorld((WorldClient)null);
                 this.mc.displayGuiScreen(new GuiMainMenu());
-
             case 2:
             case 3:
             default:
                 break;
-
             case 4:
                 this.mc.displayGuiScreen((GuiScreen)null);
                 this.mc.setIngameFocus();
                 this.mc.sndManager.resumeAllSounds();
                 break;
-
             case 5:
                 this.mc.displayGuiScreen(new GuiAchievements(this.mc.statFileWriter));
                 break;
-
             case 6:
                 this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
                 break;
-
             case 7:
                 this.mc.displayGuiScreen(new GuiShareToLan(this));
         }

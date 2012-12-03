@@ -1,7 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 
+@SideOnly(Side.CLIENT)
 public class PlayerControllerMP
 {
     /** The Minecraft instance. */
@@ -102,6 +108,12 @@ public class PlayerControllerMP
      */
     public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
     {
+        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
+        if (stack != null && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, mc.thePlayer))
+        {
+            return false;
+        }
+
         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
         {
             return false;
@@ -119,7 +131,7 @@ public class PlayerControllerMP
             {
                 var5.playAuxSFX(2001, par1, par2, par3, var6.blockID + (var5.getBlockMetadata(par1, par2, par3) << 12));
                 int var7 = var5.getBlockMetadata(par1, par2, par3);
-                boolean var8 = var5.setBlockWithNotify(par1, par2, par3, 0);
+                boolean var8 = var6.removeBlockByPlayer(var5, mc.thePlayer, par1, par2, par3);
 
                 if (var8)
                 {
@@ -315,6 +327,12 @@ public class PlayerControllerMP
         float var11 = (float)par8Vec3.zCoord - (float)par6;
         boolean var12 = false;
         int var13 = par2World.getBlockId(par4, par5, par6);
+        if (par3ItemStack != null && 
+            par3ItemStack.getItem() != null && 
+            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11))
+        {
+                return true;
+        }
 
         if (var13 > 0 && Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
         {
@@ -352,7 +370,15 @@ public class PlayerControllerMP
         }
         else
         {
-            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11);
+            if (!par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11))
+            {
+                return false;
+            }
+            if (par3ItemStack.stackSize <= 0)
+            {
+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(par1EntityPlayer, par3ItemStack));
+            }
+            return true;
         }
     }
 
@@ -374,9 +400,10 @@ public class PlayerControllerMP
         {
             par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
 
-            if (var5.stackSize == 0)
+            if (var5.stackSize <= 0)
             {
                 par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(par1EntityPlayer, var5));
             }
 
             return true;

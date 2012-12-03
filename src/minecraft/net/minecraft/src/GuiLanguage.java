@@ -1,5 +1,9 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class GuiLanguage extends GuiScreen
 {
     /** This GUI's parent GUI. */
@@ -48,11 +52,9 @@ public class GuiLanguage extends GuiScreen
             {
                 case 5:
                     break;
-
                 case 6:
                     this.mc.displayGuiScreen(this.parentGui);
                     break;
-
                 default:
                     this.languageList.actionPerformed(par1GuiButton);
             }

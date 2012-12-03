@@ -1,11 +1,15 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.client.FMLTextureFX;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
 
-public class TextureCompassFX extends TextureFX
+@SideOnly(Side.CLIENT)
+public class TextureCompassFX extends FMLTextureFX
 {
     /** A reference to the Minecraft object. */
     private Minecraft mc;
@@ -15,19 +19,34 @@ public class TextureCompassFX extends TextureFX
     public double field_76868_i;
     public double field_76866_j;
     public static TextureCompassFX field_82391_c;
+    public static int stileSizeBase = 16;
+    public static int stileSizeSquare = 256;
+    public static int stileSizeMask = 15;
+    public static int stileSizeSquareMask = 255;
 
     public TextureCompassFX(Minecraft par1Minecraft)
     {
         super(Item.compass.getIconFromDamage(0));
         this.mc = par1Minecraft;
         this.tileImage = 1;
+        setup();
+    }
 
+    @Override
+    public void setup()
+    {
+        super.setup();
+        stileSizeBase = tileSizeBase;
+        stileSizeSquare = tileSizeSquare;
+        stileSizeMask = tileSizeMask;
+        stileSizeSquareMask = tileSizeSquareMask;
+        compassIconImageData = new int[tileSizeSquare];
         try
         {
-            BufferedImage var2 = ImageIO.read(Minecraft.class.getResource("/gui/items.png"));
-            int var3 = this.iconIndex % 16 * 16;
-            int var4 = this.iconIndex / 16 * 16;
-            var2.getRGB(var3, var4, 16, 16, this.compassIconImageData, 0, 16);
+            BufferedImage var2 = ImageIO.read(mc.texturePackList.getSelectedTexturePack().getResourceAsStream("/gui/items.png"));
+            int var3 = this.iconIndex % 16 * tileSizeBase;
+            int var4 = this.iconIndex / 16 * tileSizeBase;
+            var2.getRGB(var3, var4, tileSizeBase, tileSizeBase, this.compassIconImageData, 0, tileSizeBase);
         }
         catch (IOException var5)
         {
@@ -56,7 +75,7 @@ public class TextureCompassFX extends TextureFX
         int var17;
         int var16;
 
-        for (int var10 = 0; var10 < 256; ++var10)
+        for (int var10 = 0; var10 < stileSizeSquare; ++var10)
         {
             int var11 = var8[var10] >> 24 & 255;
             int var12 = var8[var10] >> 16 & 255;
@@ -139,11 +158,12 @@ public class TextureCompassFX extends TextureFX
         int var24;
         int var26;
 
-        for (var16 = -4; var16 <= 4; ++var16)
+        for (var16 = -(stileSizeBase >> 2); var16 <= (stileSizeBase >> 2); ++var16)
         {
-            var17 = (int)(8.5D + var31 * (double)var16 * 0.3D);
-            var18 = (int)(7.5D - var30 * (double)var16 * 0.3D * 0.5D);
-            var19 = var18 * 16 + var17;
+            var17 = (int)((stileSizeBase >> 1) + 0.5D + var31 * (double)var16 * 0.3D);
+            var18 = (int)((stileSizeBase >> 1) - 0.5D - var30 * (double)var16 * 0.3D * 0.5D);
+            var19 = var18 * stileSizeBase + var17;
+
             var20 = 100;
             var21 = 100;
             var22 = 100;
@@ -165,11 +185,12 @@ public class TextureCompassFX extends TextureFX
             var9[var19 * 4 + 3] = (byte)var23;
         }
 
-        for (var16 = -8; var16 <= 16; ++var16)
+        for (var16 = -(stileSizeBase>>2); var16 <= stileSizeBase; ++var16)
         {
-            var17 = (int)(8.5D + var30 * (double)var16 * 0.3D);
-            var18 = (int)(7.5D + var31 * (double)var16 * 0.3D * 0.5D);
-            var19 = var18 * 16 + var17;
+            var17 = (int)((stileSizeBase >> 1) + 0.5D + var30 * (double)var16 * 0.3D);
+            var18 = (int)((stileSizeBase >> 1) - 0.5D + var31 * (double)var16 * 0.3D * 0.5D);
+            var19 = var18 * stileSizeBase + var17;
+            
             var20 = var16 >= 0 ? 255 : 100;
             var21 = var16 >= 0 ? 20 : 100;
             var22 = var16 >= 0 ? 20 : 100;

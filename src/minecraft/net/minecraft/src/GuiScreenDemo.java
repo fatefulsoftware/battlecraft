@@ -1,9 +1,12 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.net.URI;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class GuiScreenDemo extends GuiScreen
 {
     /**
@@ -39,7 +42,6 @@ public class GuiScreenDemo extends GuiScreen
                 }
 
                 break;
-
             case 2:
                 this.mc.displayGuiScreen((GuiScreen)null);
                 this.mc.setIngameFocus();

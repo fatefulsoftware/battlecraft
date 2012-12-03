@@ -1,10 +1,15 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.ForgeHooksClient;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+@SideOnly(Side.CLIENT)
 public class RenderItem extends Render
 {
     private RenderBlocks renderBlocks = new RenderBlocks();
@@ -55,19 +60,16 @@ public class RenderItem extends Render
 
             GL11.glTranslatef((float)par2, (float)par4 + var11, (float)par6);
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-            Block var14 = null;
+            int var16;
+            float var19;
+            float var20;
+            float var24;
 
-            if (var10.itemID < Block.blocksList.length)
+            if (ForgeHooksClient.renderEntityItem(par1EntityItem, var10, var11, var12, random, renderManager.renderEngine, renderBlocks))
             {
-                var14 = Block.blocksList[var10.itemID];
+                ;
             }
-
-            int var15;
-            float var17;
-            float var16;
-            float var18;
-
-            if (var14 != null && RenderBlocks.renderItemIn3d(var14.getRenderType()))
+            else if (var10.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
             {
                 GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
 
@@ -78,16 +80,16 @@ public class RenderItem extends Render
                     GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
                 }
 
-                this.loadTexture("/terrain.png");
-                float var24 = 0.25F;
-                var15 = var14.getRenderType();
+                this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
+                float var22 = 0.25F;
+                var16 = Block.blocksList[var10.itemID].getRenderType();
 
-                if (var15 == 1 || var15 == 19 || var15 == 12 || var15 == 2)
+                if (var16 == 1 || var16 == 19 || var16 == 12 || var16 == 2)
                 {
-                    var24 = 0.5F;
+                    var22 = 0.5F;
                 }
 
-                GL11.glScalef(var24, var24, var24);
+                GL11.glScalef(var22, var22, var22);
 
                 for (int var23 = 0; var23 < var13; ++var23)
                 {
@@ -95,21 +97,21 @@ public class RenderItem extends Render
 
                     if (var23 > 0)
                     {
-                        var18 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F / var24;
-                        var16 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F / var24;
-                        var17 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F / var24;
-                        GL11.glTranslatef(var18, var16, var17);
+                        var24 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F / var22;
+                        var19 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F / var22;
+                        var20 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.2F / var22;
+                        GL11.glTranslatef(var24, var19, var20);
                     }
 
-                    var18 = 1.0F;
-                    this.renderBlocks.renderBlockAsItem(var14, var10.getItemDamage(), var18);
+                    var24 = 1.0F;
+                    this.renderBlocks.renderBlockAsItem(Block.blocksList[var10.itemID], var10.getItemDamage(), var24);
                     GL11.glPopMatrix();
                 }
             }
             else
             {
-                int var19;
-                float var20;
+                int var15;
+                float var17;
 
                 if (var10.getItem().requiresMultipleRenderPasses())
                 {
@@ -124,23 +126,24 @@ public class RenderItem extends Render
                         GL11.glScalef(0.5F, 0.5F, 0.5F);
                     }
 
-                    this.loadTexture("/gui/items.png");
+                    this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
 
-                    for (var19 = 0; var19 <= 1; ++var19)
+                    for (var15 = 0; var15 < var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
                     {
-                        var15 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var19);
-                        var20 = 1.0F;
+                        this.random.setSeed(187L); //Fixes Vanilla bug where layers would not render aligns properly.
+                        var16 = var10.getItem().getIconFromItemStackForMultiplePasses(var10, var15);
+                        var17 = 1.0F;
 
                         if (this.field_77024_a)
                         {
-                            int var21 = Item.itemsList[var10.itemID].getColorFromItemStack(var10, var19);
-                            var16 = (float)(var21 >> 16 & 255) / 255.0F;
-                            var17 = (float)(var21 >> 8 & 255) / 255.0F;
-                            float var22 = (float)(var21 & 255) / 255.0F;
-                            GL11.glColor4f(var16 * var20, var17 * var20, var22 * var20, 1.0F);
+                            int var18 = Item.itemsList[var10.itemID].getColorFromItemStack(var10, var15);
+                            var19 = (float)(var18 >> 16 & 255) / 255.0F;
+                            var20 = (float)(var18 >> 8 & 255) / 255.0F;
+                            float var21 = (float)(var18 & 255) / 255.0F;
+                            GL11.glColor4f(var19 * var17, var20 * var17, var21 * var17, 1.0F);
                         }
 
-                        this.func_77020_a(var15, var13);
+                        this.func_77020_a(var16, var13);
                     }
                 }
                 else
@@ -156,28 +159,21 @@ public class RenderItem extends Render
                         GL11.glScalef(0.5F, 0.5F, 0.5F);
                     }
 
-                    var19 = var10.getIconIndex();
+                    var15 = var10.getIconIndex();
 
-                    if (var14 != null)
-                    {
-                        this.loadTexture("/terrain.png");
-                    }
-                    else
-                    {
-                        this.loadTexture("/gui/items.png");
-                    }
+                    this.loadTexture(var10.getItem().getTextureFile());
 
                     if (this.field_77024_a)
                     {
-                        var15 = Item.itemsList[var10.itemID].getColorFromItemStack(var10, 0);
-                        var20 = (float)(var15 >> 16 & 255) / 255.0F;
-                        var18 = (float)(var15 >> 8 & 255) / 255.0F;
-                        var16 = (float)(var15 & 255) / 255.0F;
-                        var17 = 1.0F;
-                        GL11.glColor4f(var20 * var17, var18 * var17, var16 * var17, 1.0F);
+                        var16 = Item.itemsList[var10.itemID].getColorFromItemStack(var10, 0);
+                        var17 = (float)(var16 >> 16 & 255) / 255.0F;
+                        var24 = (float)(var16 >> 8 & 255) / 255.0F;
+                        var19 = (float)(var16 & 255) / 255.0F;
+                        var20 = 1.0F;
+                        GL11.glColor4f(var17 * var20, var24 * var20, var19 * var20, 1.0F);
                     }
 
-                    this.func_77020_a(var19, var13);
+                    this.func_77020_a(var15, var13);
                 }
             }
 
@@ -229,15 +225,15 @@ public class RenderItem extends Render
         int var6 = par3ItemStack.itemID;
         int var7 = par3ItemStack.getItemDamage();
         int var8 = par3ItemStack.getIconIndex();
-        int var9;
-        float var10;
-        float var11;
+        int var10;
         float var12;
+        float var13;
+        float var16;
 
-        if (var6 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var6].getRenderType()))
+        if (par3ItemStack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par3ItemStack.itemID].getRenderType()))
         {
-            par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
-            Block var16 = Block.blocksList[var6];
+            Block var15 = Block.blocksList[var6];
+            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(var15.getTextureFile()));
             GL11.glPushMatrix();
             GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
             GL11.glScalef(10.0F, 10.0F, 10.0F);
@@ -245,45 +241,45 @@ public class RenderItem extends Render
             GL11.glScalef(1.0F, 1.0F, -1.0F);
             GL11.glRotatef(210.0F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-            var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
-            var12 = (float)(var9 >> 16 & 255) / 255.0F;
-            var10 = (float)(var9 >> 8 & 255) / 255.0F;
-            var11 = (float)(var9 & 255) / 255.0F;
+            var10 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
+            var16 = (float)(var10 >> 16 & 255) / 255.0F;
+            var12 = (float)(var10 >> 8 & 255) / 255.0F;
+            var13 = (float)(var10 & 255) / 255.0F;
 
             if (this.field_77024_a)
             {
-                GL11.glColor4f(var12, var10, var11, 1.0F);
+                GL11.glColor4f(var16, var12, var13, 1.0F);
             }
 
             GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
             this.renderBlocks.useInventoryTint = this.field_77024_a;
-            this.renderBlocks.renderBlockAsItem(var16, var7, 1.0F);
+            this.renderBlocks.renderBlockAsItem(var15, var7, 1.0F);
             this.renderBlocks.useInventoryTint = true;
             GL11.glPopMatrix();
         }
         else
         {
-            int var13;
+            int var9;
 
             if (Item.itemsList[var6].requiresMultipleRenderPasses())
             {
                 GL11.glDisable(GL11.GL_LIGHTING);
-                par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[var6].getTextureFile()));
 
-                for (var13 = 0; var13 <= 1; ++var13)
+                for (var9 = 0; var9 < Item.itemsList[var6].getRenderPasses(var7); ++var9)
                 {
-                    var9 = Item.itemsList[var6].getIconFromDamageForRenderPass(var7, var13);
-                    int var14 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var13);
-                    var10 = (float)(var14 >> 16 & 255) / 255.0F;
-                    var11 = (float)(var14 >> 8 & 255) / 255.0F;
-                    float var15 = (float)(var14 & 255) / 255.0F;
+                    var10 = Item.itemsList[var6].getIconFromItemStackForMultiplePasses(par3ItemStack, var9);
+                    int var11 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var9);
+                    var12 = (float)(var11 >> 16 & 255) / 255.0F;
+                    var13 = (float)(var11 >> 8 & 255) / 255.0F;
+                    float var14 = (float)(var11 & 255) / 255.0F;
 
                     if (this.field_77024_a)
                     {
-                        GL11.glColor4f(var10, var11, var15, 1.0F);
+                        GL11.glColor4f(var12, var13, var14, 1.0F);
                     }
 
-                    this.renderTexturedQuad(par4, par5, var9 % 16 * 16, var9 / 16 * 16, 16, 16);
+                    this.renderTexturedQuad(par4, par5, var10 % 16 * 16, var10 / 16 * 16, 16, 16);
                 }
 
                 GL11.glEnable(GL11.GL_LIGHTING);
@@ -292,23 +288,16 @@ public class RenderItem extends Render
             {
                 GL11.glDisable(GL11.GL_LIGHTING);
 
-                if (var6 < 256)
-                {
-                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
-                }
-                else
-                {
-                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
-                }
+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(par3ItemStack.getItem().getTextureFile()));
 
-                var13 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
-                float var17 = (float)(var13 >> 16 & 255) / 255.0F;
-                var12 = (float)(var13 >> 8 & 255) / 255.0F;
-                var10 = (float)(var13 & 255) / 255.0F;
+                var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
+                float var17 = (float)(var9 >> 16 & 255) / 255.0F;
+                var16 = (float)(var9 >> 8 & 255) / 255.0F;
+                var12 = (float)(var9 & 255) / 255.0F;
 
                 if (this.field_77024_a)
                 {
-                    GL11.glColor4f(var17, var12, var10, 1.0F);
+                    GL11.glColor4f(var17, var16, var12, 1.0F);
                 }
 
                 this.renderTexturedQuad(par4, par5, var8 % 16 * 16, var8 / 16 * 16, 16, 16);
@@ -326,7 +315,10 @@ public class RenderItem extends Render
     {
         if (par3ItemStack != null)
         {
-            this.renderItemIntoGUI(par1FontRenderer, par2RenderEngine, par3ItemStack, par4, par5);
+            if (!ForgeHooksClient.renderInventoryItem(renderBlocks, par2RenderEngine, par3ItemStack, field_77024_a, zLevel, (float)par4, (float)par5))
+            {
+                this.renderItemIntoGUI(par1FontRenderer, par2RenderEngine, par3ItemStack, par4, par5);
+            }
 
             if (par3ItemStack != null && par3ItemStack.hasEffect())
             {

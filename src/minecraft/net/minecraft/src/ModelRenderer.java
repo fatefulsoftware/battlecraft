@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.opengl.GL11;
@@ -116,7 +118,8 @@ public class ModelRenderer
         this.rotationPointY = par2;
         this.rotationPointZ = par3;
     }
-
+    
+    @SideOnly(Side.CLIENT)
     public void render(float par1)
     {
         if (!this.isHidden)
@@ -199,6 +202,7 @@ public class ModelRenderer
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void renderWithRotation(float par1)
     {
         if (!this.isHidden)
@@ -237,6 +241,7 @@ public class ModelRenderer
     /**
      * Allows the changing of Angles after a box has been rendered
      */
+    @SideOnly(Side.CLIENT)
     public void postRender(float par1)
     {
         if (!this.isHidden)
@@ -281,6 +286,7 @@ public class ModelRenderer
     /**
      * Compiles a GL display list for this model
      */
+    @SideOnly(Side.CLIENT)
     private void compileDisplayList(float par1)
     {
         this.displayList = GLAllocation.generateDisplayLists(1);

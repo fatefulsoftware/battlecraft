@@ -1,7 +1,10 @@
 package org.bouncycastle.crypto;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.security.SecureRandom;
 
+@SideOnly(Side.CLIENT)
 public class KeyGenerationParameters
 {
     private SecureRandom random;

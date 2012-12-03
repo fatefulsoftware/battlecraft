@@ -1,9 +1,22 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
+
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+
 import net.minecraft.server.MinecraftServer;
 
+@SideOnly(Side.CLIENT)
 public class IntegratedServerListenThread extends NetworkListenThread
 {
     private final MemoryConnection netMemoryConnection = new MemoryConnection((NetHandler)null);
@@ -54,7 +67,7 @@ public class IntegratedServerListenThread extends NetworkListenThread
             }
         }
 
-        return this.myServerListenThread.getInetAddress().getHostAddress() + ":" + this.myServerListenThread.getMyPort();
+        return FMLNetworkHandler.computeLocalHost().getHostAddress() + ":" + this.myServerListenThread.getMyPort();
     }
 
     public void stopListening()
@@ -106,7 +119,7 @@ public class IntegratedServerListenThread extends NetworkListenThread
         return (IntegratedServer)super.getServer();
     }
 
-    public boolean isGamePaused()
+    public boolean func_71752_f()
     {
         return this.field_71756_f && this.netMemoryConnection.getPairedConnection().isConnectionActive() && this.netMemoryConnection.getPairedConnection().isGamePaused();
     }

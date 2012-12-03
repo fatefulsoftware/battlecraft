@@ -1,7 +1,10 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.concurrent.Callable;
 
+@SideOnly(Side.CLIENT)
 class CallableScreenName implements Callable
 {
     final EntityRenderer field_90032_a;
@@ -13,7 +16,7 @@ class CallableScreenName implements Callable
 
     public String func_90031_a()
     {
-        return EntityRenderer.getRendererMinecraft(this.field_90032_a).currentScreen.getClass().getCanonicalName();
+        return EntityRenderer.func_90030_a(this.field_90032_a).currentScreen.getClass().getCanonicalName();
     }
 
     public Object call()

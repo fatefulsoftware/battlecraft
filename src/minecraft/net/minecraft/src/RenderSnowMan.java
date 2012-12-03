@@ -1,7 +1,15 @@
 package net.minecraft.src;
 
+import net.minecraftforge.client.IItemRenderer;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+import net.minecraftforge.client.MinecraftForgeClient;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public class RenderSnowMan extends RenderLiving
 {
     /** A reference to the Snowman model in RenderSnowMan. */
@@ -22,12 +30,15 @@ public class RenderSnowMan extends RenderLiving
         super.renderEquippedItems(par1EntitySnowman, par2);
         ItemStack var3 = new ItemStack(Block.pumpkin, 1);
 
-        if (var3 != null && var3.getItem().shiftedIndex < 256)
+        if (var3 != null && var3.getItem() instanceof ItemBlock)
         {
             GL11.glPushMatrix();
             this.snowmanModel.head.postRender(0.0625F);
 
-            if (RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var3, EQUIPPED);
+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var3, BLOCK_3D));
+
+            if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
             {
                 float var4 = 0.625F;
                 GL11.glTranslatef(0.0F, -0.34375F, 0.0F);

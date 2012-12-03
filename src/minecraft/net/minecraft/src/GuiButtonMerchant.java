@@ -1,9 +1,12 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-class GuiButtonMerchant extends GuiButton
+@SideOnly(Side.CLIENT)
+public class GuiButtonMerchant extends GuiButton
 {
     /**
      * If true, then next page button will face to right, if false then next page button will face to left.

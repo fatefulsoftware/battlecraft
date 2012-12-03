@@ -1,10 +1,13 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+@SideOnly(Side.CLIENT)
 public abstract class GuiSlot
 {
     private final Minecraft mc;
@@ -64,6 +67,8 @@ public abstract class GuiSlot
     private boolean showSelectionBox = true;
     private boolean field_77243_s;
     private int field_77242_t;
+
+    public String BACKGROUND_IMAGE = "/gui/background.png";
 
     public GuiSlot(Minecraft par1Minecraft, int par2, int par3, int par4, int par5, int par6)
     {
@@ -302,7 +307,7 @@ public abstract class GuiSlot
         }
         else
         {
-            while (!this.mc.gameSettings.touchscreen && Mouse.next())
+            while (!this.mc.gameSettings.field_85185_A && Mouse.next())
             {
                 int var16 = Mouse.getEventDWheel();
 
@@ -328,16 +333,7 @@ public abstract class GuiSlot
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
         Tessellator var18 = Tessellator.instance;
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/background.png"));
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        float var17 = 32.0F;
-        var18.startDrawingQuads();
-        var18.setColorOpaque_I(2105376);
-        var18.addVertexWithUV((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / var17), (double)((float)(this.bottom + (int)this.amountScrolled) / var17));
-        var18.addVertexWithUV((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / var17), (double)((float)(this.bottom + (int)this.amountScrolled) / var17));
-        var18.addVertexWithUV((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / var17), (double)((float)(this.top + (int)this.amountScrolled) / var17));
-        var18.addVertexWithUV((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / var17), (double)((float)(this.top + (int)this.amountScrolled) / var17));
-        var18.draw();
+        drawContainerBackground(var18);
         var9 = this.width / 2 - 92 - 16;
         var10 = this.top + 4 - (int)this.amountScrolled;
 
@@ -466,10 +462,10 @@ public abstract class GuiSlot
     /**
      * Overlays the background to hide scrolled items
      */
-    private void overlayBackground(int par1, int par2, int par3, int par4)
+    protected void overlayBackground(int par1, int par2, int par3, int par4)
     {
         Tessellator var5 = Tessellator.instance;
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/background.png"));
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(BACKGROUND_IMAGE));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var6 = 32.0F;
         var5.startDrawingQuads();
@@ -480,5 +476,19 @@ public abstract class GuiSlot
         var5.addVertexWithUV((double)this.width, (double)par1, 0.0D, (double)((float)this.width / var6), (double)((float)par1 / var6));
         var5.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / var6));
         var5.draw();
+    }
+
+    protected void drawContainerBackground(Tessellator tess)
+    {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(BACKGROUND_IMAGE));
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        float height = 32.0F;
+        tess.startDrawingQuads();
+        tess.setColorOpaque_I(2105376);
+        tess.addVertexWithUV((double)left,  (double)bottom, 0.0D, (double)(left  / height), (double)((bottom + (int)amountScrolled) / height));
+        tess.addVertexWithUV((double)right, (double)bottom, 0.0D, (double)(right / height), (double)((bottom + (int)amountScrolled) / height));
+        tess.addVertexWithUV((double)right, (double)top,    0.0D, (double)(right / height), (double)((top    + (int)amountScrolled) / height));
+        tess.addVertexWithUV((double)left,  (double)top,    0.0D, (double)(left  / height), (double)((top    + (int)amountScrolled) / height));
+        tess.draw();
     }
 }

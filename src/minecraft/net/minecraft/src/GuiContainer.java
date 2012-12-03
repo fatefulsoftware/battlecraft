@@ -1,11 +1,14 @@
 package net.minecraft.src;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+@SideOnly(Side.CLIENT)
 public abstract class GuiContainer extends GuiScreen
 {
     /** Stacks renderer. Icons, stack size, health, etc... */
@@ -30,20 +33,14 @@ public abstract class GuiContainer extends GuiScreen
      */
     protected int guiTop;
     private Slot theSlot;
-
-    /** Used when touchscreen is enabled */
-    private Slot clickedSlot = null;
+    private Slot field_85051_p = null;
     private boolean field_90018_r = false;
-
-    /** Used when touchscreen is enabled */
-    private ItemStack draggedStack = null;
+    private ItemStack field_85050_q = null;
     private int field_85049_r = 0;
     private int field_85048_s = 0;
-    private Slot returningStackDestSlot = null;
-    private long returningStackTime = 0L;
-
-    /** Used when touchscreen is enabled */
-    private ItemStack returningStack = null;
+    private Slot field_85047_t = null;
+    private long field_85046_u = 0L;
+    private ItemStack field_85045_v = null;
 
     public GuiContainer(Container par1Container)
     {
@@ -108,42 +105,42 @@ public abstract class GuiContainer extends GuiScreen
 
         this.drawGuiContainerForegroundLayer(par1, par2);
         InventoryPlayer var15 = this.mc.thePlayer.inventory;
-        ItemStack var16 = this.draggedStack == null ? var15.getItemStack() : this.draggedStack;
+        ItemStack var16 = this.field_85050_q == null ? var15.getItemStack() : this.field_85050_q;
 
         if (var16 != null)
         {
-            var8 = this.draggedStack == null ? 8 : 0;
+            var8 = this.field_85050_q == null ? 8 : 0;
 
-            if (this.draggedStack != null && this.field_90018_r)
+            if (this.field_85050_q != null && this.field_90018_r)
             {
                 var16 = var16.copy();
                 var16.stackSize = MathHelper.ceiling_float_int((float)var16.stackSize / 2.0F);
             }
 
-            this.drawItemStack(var16, par1 - var4 - var8, par2 - var5 - var8);
+            this.func_85044_b(var16, par1 - var4 - var8, par2 - var5 - var8);
         }
 
-        if (this.returningStack != null)
+        if (this.field_85045_v != null)
         {
-            float var17 = (float)(Minecraft.getSystemTime() - this.returningStackTime) / 100.0F;
+            float var17 = (float)(Minecraft.getSystemTime() - this.field_85046_u) / 100.0F;
 
             if (var17 >= 1.0F)
             {
                 var17 = 1.0F;
-                this.returningStack = null;
+                this.field_85045_v = null;
             }
 
-            var9 = this.returningStackDestSlot.xDisplayPosition - this.field_85049_r;
-            int var10 = this.returningStackDestSlot.yDisplayPosition - this.field_85048_s;
+            var9 = this.field_85047_t.xDisplayPosition - this.field_85049_r;
+            int var10 = this.field_85047_t.yDisplayPosition - this.field_85048_s;
             int var11 = this.field_85049_r + (int)((float)var9 * var17);
             int var12 = this.field_85048_s + (int)((float)var10 * var17);
-            this.drawItemStack(this.returningStack, var11, var12);
+            this.func_85044_b(this.field_85045_v, var11, var12);
         }
 
         if (var15.getItemStack() == null && this.theSlot != null && this.theSlot.getHasStack())
         {
             ItemStack var18 = this.theSlot.getStack();
-            this.drawItemStackTooltip(var18, par1 - var4 + 8, par2 - var5 + 8);
+            this.func_74184_a(var18, par1 - var4 + 8, par2 - var5 + 8);
         }
 
         GL11.glPopMatrix();
@@ -152,7 +149,7 @@ public abstract class GuiContainer extends GuiScreen
         RenderHelper.enableStandardItemLighting();
     }
 
-    private void drawItemStack(ItemStack par1ItemStack, int par2, int par3)
+    private void func_85044_b(ItemStack par1ItemStack, int par2, int par3)
     {
         GL11.glTranslatef(0.0F, 0.0F, 32.0F);
         this.zLevel = 200.0F;
@@ -163,7 +160,7 @@ public abstract class GuiContainer extends GuiScreen
         itemRenderer.zLevel = 0.0F;
     }
 
-    protected void drawItemStackTooltip(ItemStack par1ItemStack, int par2, int par3)
+    protected void func_74184_a(ItemStack par1ItemStack, int par2, int par3)
     {
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.disableStandardItemLighting();
@@ -294,9 +291,9 @@ public abstract class GuiContainer extends GuiScreen
         int var2 = par1Slot.xDisplayPosition;
         int var3 = par1Slot.yDisplayPosition;
         ItemStack var4 = par1Slot.getStack();
-        boolean var5 = par1Slot == this.clickedSlot && this.draggedStack != null && !this.field_90018_r;
+        boolean var5 = par1Slot == this.field_85051_p && this.field_85050_q != null && !this.field_90018_r;
 
-        if (par1Slot == this.clickedSlot && this.draggedStack != null && this.field_90018_r && var4 != null)
+        if (par1Slot == this.field_85051_p && this.field_85050_q != null && this.field_90018_r && var4 != null)
         {
             var4 = var4.copy();
             var4.stackSize /= 2;
@@ -312,7 +309,7 @@ public abstract class GuiContainer extends GuiScreen
             if (var6 >= 0)
             {
                 GL11.glDisable(GL11.GL_LIGHTING);
-                this.mc.renderEngine.bindTexture(this.mc.renderEngine.getTexture("/gui/items.png"));
+                this.mc.renderEngine.bindTexture(this.mc.renderEngine.getTexture(par1Slot.getBackgroundIconTexture()));
                 this.drawTexturedModalRect(var2, var3, var6 % 16 * 16, var6 / 16 * 16, 16, 16);
                 GL11.glEnable(GL11.GL_LIGHTING);
                 var5 = true;
@@ -374,7 +371,7 @@ public abstract class GuiContainer extends GuiScreen
                 var9 = -999;
             }
 
-            if (this.mc.gameSettings.touchscreen && var8 && this.mc.thePlayer.inventory.getItemStack() == null)
+            if (this.mc.gameSettings.field_85185_A && var8 && this.mc.thePlayer.inventory.getItemStack() == null)
             {
                 this.mc.displayGuiScreen((GuiScreen)null);
                 return;
@@ -382,17 +379,17 @@ public abstract class GuiContainer extends GuiScreen
 
             if (var9 != -1)
             {
-                if (this.mc.gameSettings.touchscreen)
+                if (this.mc.gameSettings.field_85185_A)
                 {
                     if (var5 != null && var5.getHasStack())
                     {
-                        this.clickedSlot = var5;
-                        this.draggedStack = null;
+                        this.field_85051_p = var5;
+                        this.field_85050_q = null;
                         this.field_90018_r = par3 == 1;
                     }
                     else
                     {
-                        this.clickedSlot = null;
+                        this.field_85051_p = null;
                     }
                 }
                 else if (var4)
@@ -410,15 +407,15 @@ public abstract class GuiContainer extends GuiScreen
 
     protected void func_85041_a(int par1, int par2, int par3, long par4)
     {
-        if (this.clickedSlot != null && this.mc.gameSettings.touchscreen && this.draggedStack == null)
+        if (this.field_85051_p != null && this.mc.gameSettings.field_85185_A && this.field_85050_q == null)
         {
             if (par3 == 0 || par3 == 1)
             {
                 Slot var6 = this.getSlotAtPosition(par1, par2);
 
-                if (var6 != this.clickedSlot)
+                if (var6 != this.field_85051_p)
                 {
-                    this.draggedStack = this.clickedSlot.getStack();
+                    this.field_85050_q = this.field_85051_p.getStack();
                 }
             }
         }
@@ -430,7 +427,7 @@ public abstract class GuiContainer extends GuiScreen
      */
     protected void mouseMovedOrUp(int par1, int par2, int par3)
     {
-        if (this.clickedSlot != null && this.mc.gameSettings.touchscreen)
+        if (this.field_85051_p != null && this.mc.gameSettings.field_85185_A)
         {
             if (par3 == 0 || par3 == 1)
             {
@@ -450,48 +447,48 @@ public abstract class GuiContainer extends GuiScreen
                     var8 = -999;
                 }
 
-                if (this.draggedStack == null && var4 != this.clickedSlot)
+                if (this.field_85050_q == null && var4 != this.field_85051_p)
                 {
-                    this.draggedStack = this.clickedSlot.getStack();
+                    this.field_85050_q = this.field_85051_p.getStack();
                 }
 
                 boolean var9 = var4 == null || !var4.getHasStack();
 
-                if (var4 != null && var4.getHasStack() && this.draggedStack != null && ItemStack.areItemStackTagsEqual(var4.getStack(), this.draggedStack))
+                if (var4 != null && var4.getHasStack() && this.field_85050_q != null && ItemStack.areItemStackTagsEqual(var4.getStack(), this.field_85050_q))
                 {
-                    var9 |= var4.getStack().stackSize + this.draggedStack.stackSize <= this.draggedStack.getMaxStackSize();
+                    var9 |= var4.getStack().stackSize + this.field_85050_q.stackSize <= this.field_85050_q.getMaxStackSize();
                 }
 
-                if (var8 != -1 && this.draggedStack != null && var9)
+                if (var8 != -1 && this.field_85050_q != null && var9)
                 {
-                    this.handleMouseClick(this.clickedSlot, this.clickedSlot.slotNumber, par3, 0);
+                    this.handleMouseClick(this.field_85051_p, this.field_85051_p.slotNumber, par3, 0);
                     this.handleMouseClick(var4, var8, 0, 0);
 
                     if (this.mc.thePlayer.inventory.getItemStack() != null)
                     {
-                        this.handleMouseClick(this.clickedSlot, this.clickedSlot.slotNumber, par3, 0);
+                        this.handleMouseClick(this.field_85051_p, this.field_85051_p.slotNumber, par3, 0);
                         this.field_85049_r = par1 - var5;
                         this.field_85048_s = par2 - var6;
-                        this.returningStackDestSlot = this.clickedSlot;
-                        this.returningStack = this.draggedStack;
-                        this.returningStackTime = Minecraft.getSystemTime();
+                        this.field_85047_t = this.field_85051_p;
+                        this.field_85045_v = this.field_85050_q;
+                        this.field_85046_u = Minecraft.getSystemTime();
                     }
                     else
                     {
-                        this.returningStack = null;
+                        this.field_85045_v = null;
                     }
                 }
-                else if (this.draggedStack != null)
+                else if (this.field_85050_q != null)
                 {
                     this.field_85049_r = par1 - var5;
                     this.field_85048_s = par2 - var6;
-                    this.returningStackDestSlot = this.clickedSlot;
-                    this.returningStack = this.draggedStack;
-                    this.returningStackTime = Minecraft.getSystemTime();
+                    this.field_85047_t = this.field_85051_p;
+                    this.field_85045_v = this.field_85050_q;
+                    this.field_85046_u = Minecraft.getSystemTime();
                 }
 
-                this.draggedStack = null;
-                this.clickedSlot = null;
+                this.field_85050_q = null;
+                this.field_85051_p = null;
             }
         }
     }

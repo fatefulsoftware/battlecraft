@@ -1,5 +1,7 @@
 package net.minecraft.client;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -13,7 +15,9 @@ import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.swing.JPanel;
+
 import net.minecraft.src.AchievementList;
 import net.minecraft.src.AnvilSaveConverter;
 import net.minecraft.src.AxisAlignedBB;
@@ -120,6 +124,10 @@ import net.minecraft.src.WorldClient;
 import net.minecraft.src.WorldInfo;
 import net.minecraft.src.WorldRenderer;
 import net.minecraft.src.WorldSettings;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -133,6 +141,13 @@ import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.relauncher.ArgsWrapper;
+import cpw.mods.fml.relauncher.FMLRelauncher;
+
+@SideOnly(Side.CLIENT)
 public abstract class Minecraft implements Runnable, IPlayerUsage
 {
     /** A 10MiB preallocation to ensure the heap is reasonably sized. */
@@ -292,7 +307,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
 
     public Minecraft(Canvas par1Canvas, MinecraftApplet par2MinecraftApplet, int par3, int par4, boolean par5)
     {
-        StatList.func_75919_a();
+        StatList.nopInit();
         this.tempDisplayHeight = par4;
         this.fullscreen = par5;
         this.mcApplet = par2MinecraftApplet;
@@ -406,7 +421,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
         this.loadScreen();
         this.fontRenderer = new FontRenderer(this.gameSettings, "/font/default.png", this.renderEngine, false);
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, "/font/alternate.png", this.renderEngine, false);
-
+        FMLClientHandler.instance().beginMinecraftLoading(this);
         if (this.gameSettings.language != null)
         {
             StringTranslate.getInstance().setLanguage(this.gameSettings.language);
@@ -451,6 +466,8 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
         GL11.glViewport(0, 0, this.displayWidth, this.displayHeight);
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
 
+        FMLClientHandler.instance().finishMinecraftLoading();
+
         try
         {
             this.downloadResourcesThread = new ThreadDownloadResources(this.mcDataDir, this);
@@ -479,6 +496,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
         {
             this.toggleFullscreen();
         }
+        FMLClientHandler.instance().onInitializationComplete();
     }
 
     /**
@@ -563,7 +581,6 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
             case 2:
                 var2 = new File(var1, '.' + par0Str + '/');
                 break;
-
             case 3:
                 String var3 = System.getenv("APPDATA");
 
@@ -577,11 +594,9 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
                 }
 
                 break;
-
             case 4:
                 var2 = new File(var1, "Library/Application Support/" + par0Str);
                 break;
-
             default:
                 var2 = new File(var1, par0Str + '/');
         }
@@ -868,9 +883,11 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
 
             if (!this.skipRenderWorld)
             {
+                FMLCommonHandler.instance().onRenderTickStart(this.timer.renderPartialTicks);
                 this.mcProfiler.endStartSection("gameRenderer");
                 this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks);
                 this.mcProfiler.endSection();
+                FMLCommonHandler.instance().onRenderTickEnd(this.timer.renderPartialTicks);
             }
 
             GL11.glFlush();
@@ -955,7 +972,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
 
             if (this.func_90020_K() > 0)
             {
-                Display.sync(EntityRenderer.performanceToFps(this.func_90020_K()));
+                Display.sync(EntityRenderer.func_78465_a(this.func_90020_K()));
             }
         }
     }
@@ -1246,7 +1263,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
 
                 if (this.thePlayer.canCurrentToolHarvestBlock(var3, var4, var5))
                 {
-                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver.sideHit);
+                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver);
                     this.thePlayer.swingItem();
                 }
             }
@@ -1312,7 +1329,8 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
                 {
                     int var8 = var3 != null ? var3.stackSize : 0;
 
-                    if (this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, var3, var4, var5, var6, var7, this.objectMouseOver.hitVec))
+                    boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_BLOCK, var4, var5, var6, var7).isCanceled();
+                    if (result && this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, var3, var4, var5, var6, var7, this.objectMouseOver.hitVec))
                     {
                         var2 = false;
                         this.thePlayer.swingItem();
@@ -1338,7 +1356,8 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
             {
                 ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
 
-                if (var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
+                boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
+                if (result && var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
                 {
                     this.entityRenderer.itemRenderer.func_78445_c();
                 }
@@ -1432,11 +1451,13 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
      */
     public void runTick()
     {
+        FMLCommonHandler.instance().rescheduleTicks(Side.CLIENT);
         if (this.rightClickDelayTimer > 0)
         {
             --this.rightClickDelayTimer;
         }
 
+        FMLCommonHandler.instance().onPreClientTick();
         this.mcProfiler.startSection("stats");
         this.statFileWriter.func_77449_e();
         this.mcProfiler.endStartSection("gui");
@@ -1495,8 +1516,8 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
             }
             catch (Throwable var6)
             {
-                var2 = CrashReport.makeCrashReport(var6, "Updating screen events");
-                var3 = var2.makeCategory("Affected screen");
+                var2 = CrashReport.func_85055_a(var6, "Updating screen events");
+                var3 = var2.func_85058_a("Affected screen");
                 var3.addCrashSectionCallable("Screen name", new CallableUpdatingScreenName(this));
                 throw new ReportedException(var2);
             }
@@ -1509,8 +1530,8 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
                 }
                 catch (Throwable var5)
                 {
-                    var2 = CrashReport.makeCrashReport(var5, "Ticking screen particles");
-                    var3 = var2.makeCategory("Affected screen");
+                    var2 = CrashReport.func_85055_a(var5, "Ticking screen particles");
+                    var3 = var2.func_85058_a("Affected screen");
                     var3.addCrashSectionCallable("Screen name", new CallableParticleScreenName(this));
                     throw new ReportedException(var2);
                 }
@@ -1521,8 +1542,8 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
                 }
                 catch (Throwable var4)
                 {
-                    var2 = CrashReport.makeCrashReport(var4, "Ticking screen");
-                    var3 = var2.makeCategory("Affected screen");
+                    var2 = CrashReport.func_85055_a(var4, "Ticking screen");
+                    var3 = var2.func_85058_a("Affected screen");
                     var3.addCrashSectionCallable("Screen name", new CallableTickingScreenName(this));
                     throw new ReportedException(var2);
                 }
@@ -1856,11 +1877,11 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
                 }
                 catch (Throwable var7)
                 {
-                    var2 = CrashReport.makeCrashReport(var7, "Exception in world tick");
+                    var2 = CrashReport.func_85055_a(var7, "Exception in world tick");
 
                     if (this.theWorld == null)
                     {
-                        var3 = var2.makeCategory("Affected level");
+                        var3 = var2.func_85058_a("Affected level");
                         var3.addCrashSection("Problem", "Level is null!");
                     }
                     else
@@ -1892,6 +1913,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
             this.myNetworkManager.processReadPackets();
         }
 
+        FMLCommonHandler.instance().onPostClientTick();
         this.mcProfiler.endSection();
         this.systemTime = getSystemTime();
     }
@@ -2009,6 +2031,18 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
             if (this.theIntegratedServer != null)
             {
                 this.theIntegratedServer.initiateShutdown();
+                if (loadingScreen!=null)
+                {
+                    this.loadingScreen.resetProgresAndWorkingMessage("Shutting down internal server...");
+                }
+                while (!theIntegratedServer.isServerStopped())
+                {
+                    try
+                    {
+                        Thread.sleep(10);
+                    }
+                    catch (InterruptedException ie) {}
+                }
             }
 
             this.theIntegratedServer = null;
@@ -2182,6 +2216,12 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
 
     public static void main(String[] par0ArrayOfStr)
     {
+        FMLRelauncher.handleClientRelaunch(new ArgsWrapper(par0ArrayOfStr));
+    }
+
+    public static void fmlReentry(ArgsWrapper wrapper)
+    {
+        String[] par0ArrayOfStr = wrapper.args;
         HashMap var1 = new HashMap();
         boolean var2 = false;
         boolean var3 = true;
@@ -2312,95 +2352,12 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
         if (this.objectMouseOver != null)
         {
             boolean var1 = this.thePlayer.capabilities.isCreativeMode;
-            int var3 = 0;
-            boolean var4 = false;
-            int var2;
             int var5;
 
-            if (this.objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
+            if (!ForgeHooks.onPickBlock(this.objectMouseOver, this.thePlayer, this.theWorld))
             {
-                var5 = this.objectMouseOver.blockX;
-                int var6 = this.objectMouseOver.blockY;
-                int var7 = this.objectMouseOver.blockZ;
-                Block var8 = Block.blocksList[this.theWorld.getBlockId(var5, var6, var7)];
-
-                if (var8 == null)
-                {
-                    return;
-                }
-
-                var2 = var8.idPicked(this.theWorld, var5, var6, var7);
-
-                if (var2 == 0)
-                {
-                    return;
-                }
-
-                var4 = Item.itemsList[var2].getHasSubtypes();
-                int var9 = var2 < 256 && !Block.blocksList[var8.blockID].func_82505_u_() ? var2 : var8.blockID;
-                var3 = Block.blocksList[var9].getDamageValue(this.theWorld, var5, var6, var7);
+                return;
             }
-            else
-            {
-                if (this.objectMouseOver.typeOfHit != EnumMovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !var1)
-                {
-                    return;
-                }
-
-                if (this.objectMouseOver.entityHit instanceof EntityPainting)
-                {
-                    var2 = Item.painting.shiftedIndex;
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
-                {
-                    EntityItemFrame var10 = (EntityItemFrame)this.objectMouseOver.entityHit;
-
-                    if (var10.getDisplayedItem() == null)
-                    {
-                        var2 = Item.itemFrame.shiftedIndex;
-                    }
-                    else
-                    {
-                        var2 = var10.getDisplayedItem().itemID;
-                        var3 = var10.getDisplayedItem().getItemDamage();
-                        var4 = true;
-                    }
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
-                {
-                    EntityMinecart var11 = (EntityMinecart)this.objectMouseOver.entityHit;
-
-                    if (var11.minecartType == 2)
-                    {
-                        var2 = Item.minecartPowered.shiftedIndex;
-                    }
-                    else if (var11.minecartType == 1)
-                    {
-                        var2 = Item.minecartCrate.shiftedIndex;
-                    }
-                    else
-                    {
-                        var2 = Item.minecartEmpty.shiftedIndex;
-                    }
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
-                {
-                    var2 = Item.boat.shiftedIndex;
-                }
-                else
-                {
-                    var2 = Item.monsterPlacer.shiftedIndex;
-                    var3 = EntityList.getEntityID(this.objectMouseOver.entityHit);
-                    var4 = true;
-
-                    if (var3 <= 0 || !EntityList.entityEggs.containsKey(Integer.valueOf(var3)))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            this.thePlayer.inventory.setCurrentItem(var2, var3, var4, var1);
 
             if (var1)
             {
