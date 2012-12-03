@@ -15,7 +15,7 @@ public class GrenadeLauncherItem extends Item {
         setCreativeTab(CreativeTabs.tabCombat);
         setItemName("grenadeLauncher");
         setFull3D();
-        iconIndex = ModLoader.addOverride("/gui/items.png", "/battlecraft/grenadelauncher.png");
+        setIconIndex(2);
     }
     
     @Override
@@ -61,5 +61,10 @@ public class GrenadeLauncherItem extends Item {
     //@Override missing in the server side base class
     public boolean shouldRotateAroundWhenRendering () {
         return true;
+    }
+    
+    @Override
+    public String getTextureFile () {
+    	return mod_Battlecraft.TEXTURE;
     }
 }

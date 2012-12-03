@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 public class mod_Battlecraft extends BaseMod implements OnPlayerJoinedListener, OnPlayerLeftListener {
 	public static final Item grenade = new GrenadeItem(201);
     public static final Item grenadeLauncher = (new GrenadeLauncherItem(202));
+    protected static final String TEXTURE = "/battlecraft/textures.png";
 
     public static final Block sandbagBlock = (new SandbagBlock(200));
     
@@ -24,24 +26,6 @@ public class mod_Battlecraft extends BaseMod implements OnPlayerJoinedListener, 
 		teams.add(new BattlecraftTeam("Blue", Color.BLUE, new Point(50, 0)));
 		
 		players = new HashMap<EntityPlayer, BattlecraftTeam>();
-		
-        ModLoader.addName(sandbagBlock, "Sandbag");
-        ModLoader.addRecipe(new ItemStack(sandbagBlock), new Object[] {
-			"XXX", "XSX", "XXX", 'X', Block.cloth, 'S', Block.sand
-		});
-        ModLoader.registerBlock(sandbagBlock);
-        
-        ModLoader.addName(grenade, "Grenade");
-        ModLoader.addRecipe(new ItemStack(grenade), new Object[] {
-            "###", "#X#", "###", Character.valueOf('#'), Item.ingotIron, Character.valueOf('X'), Item.gunpowder
-        });
-        
-        ModLoader.registerEntityID(GrenadeEntity.class, "Grenade", ModLoader.getUniqueEntityId());
-        
-        ModLoader.addName(grenadeLauncher, "Grenade Launcher");
-        ModLoader.addRecipe(new ItemStack(grenadeLauncher), new Object[] {
-			"XXX", " X ", 'X', Item.ingotIron
-		});
         
         BattlecraftPlayerTracker.getSharedInstance().addJoinListener(this);
         BattlecraftPlayerTracker.getSharedInstance().addLeaveListener(this);
@@ -82,7 +66,24 @@ public class mod_Battlecraft extends BaseMod implements OnPlayerJoinedListener, 
 	}
 
 	//@Override
-	public void load() {
+	public void load () {
+        ModLoader.addName(sandbagBlock, "Sandbag");
+        ModLoader.addRecipe(new ItemStack(sandbagBlock), new Object[] {
+			"XXX", "XSX", "XXX", 'X', Block.cloth, 'S', Block.sand
+		});
+        ModLoader.registerBlock(sandbagBlock);
+        
+        ModLoader.addName(grenade, "Grenade");
+        ModLoader.addRecipe(new ItemStack(grenade), new Object[] {
+            "###", "#X#", "###", Character.valueOf('#'), Item.ingotIron, Character.valueOf('X'), Item.gunpowder
+        });
+        
+        ModLoader.registerEntityID(GrenadeEntity.class, "Grenade", ModLoader.getUniqueEntityId());
+        
+        ModLoader.addName(grenadeLauncher, "Grenade Launcher");
+        ModLoader.addRecipe(new ItemStack(grenadeLauncher), new Object[] {
+			"XXX", " X ", 'X', Item.ingotIron
+		});
 	}
 
 	@Override

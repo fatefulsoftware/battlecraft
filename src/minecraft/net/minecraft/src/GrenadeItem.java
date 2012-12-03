@@ -11,10 +11,8 @@ public class GrenadeItem extends Item {
 	public GrenadeItem (int par1) {
 		super(par1);
 		
-		setIconIndex(30);
+		setIconIndex(1);
 		setItemName("grenade");
-
-        iconIndex = ModLoader.addOverride("/gui/items.png", "/battlecraft/grenade.png");
 	}
 	
 	@Override
@@ -49,5 +47,10 @@ public class GrenadeItem extends Item {
     	par1ItemStack.damageItem(1, par2EntityLiving);
     	
     	return true;
+    }
+    
+    @Override
+    public String getTextureFile () {
+    	return mod_Battlecraft.TEXTURE;
     }
 }
