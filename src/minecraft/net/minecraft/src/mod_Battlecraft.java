@@ -76,12 +76,12 @@ public class mod_Battlecraft extends BaseMod implements OnPlayerJoinedListener, 
 		players.remove(player);
 	}
 	
-	@Override
+	//@Override
 	public String getVersion() {
 		return "1";
 	}
 
-	@Override
+	//@Override
 	public void load() {
 	}
 

@@ -58,7 +58,7 @@ public class GrenadeLauncherItem extends Item {
     	return true;
     }
 
-    @Override
+    //@Override missing in the server side base class
     public boolean shouldRotateAroundWhenRendering () {
         return true;
     }
